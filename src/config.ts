@@ -1,7 +1,7 @@
 export const config = {
     db: {
         host: process.env.DB_SERVER || 'localhost',
-        name: process.env.DB_NAME || 'blue-stream-featureName',
+        name: process.env.DB_NAME || 'blue-stream-channel',
         port: +(process.env.DB_PORT || 27017),
     },
     logger: {
@@ -22,7 +22,7 @@ export const config = {
     },
     server: {
         port:  +(process.env.PORT || 3000),
-        name: 'featureName',
+        name: 'channel',
     },
     cors: {
         allowedOrigins: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:4200'],

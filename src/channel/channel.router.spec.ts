@@ -1,76 +1,67 @@
 import * as request from 'supertest';
 import { expect } from 'chai';
-// <MongoDB>
-import * as mongoose from 'mongoose';
-// </MongoDB>
 
-import { IFeatureName } from './FEATURE_NAME.interface';
+import * as mongoose from 'mongoose';
+import { IChannel } from './channel.interface';
 import { Server } from '../server';
-import { PropertyInvalidError, IdInvalidError, FeatureNameNotFoundError } from '../utils/errors/userErrors';
+import { PropertyInvalidError, IdInvalidError, ChannelNotFoundError } from '../utils/errors/userErrors';
 import { config } from '../config';
-import { FeatureNameManager } from './FEATURE_NAME.manager';
+import { ChannelManager } from './channel.manager';
 import { sign } from 'jsonwebtoken';
 
-describe('FeatureName Router Module', function () {
+describe('Channel Router Module', function () {
     let server: Server;
     const validProppertyString: string = '12345';
-    const featureName: IFeatureName = {
+    const channel: IChannel = {
         property: validProppertyString,
     };
     const authorizationHeader = `Bearer ${sign('mock-user', config.authentication.secret)}`;
     const invalidId: string = '1';
     const invalidProppertyString: string = '123456789123456789';
-    const invalidFeatureName: IFeatureName = {
+    const invalidChannel: IChannel = {
         property: invalidProppertyString,
     };
-    // <MongoDB>
+    
 
-    const featureName2: IFeatureName = {
+    const channel2: IChannel = {
         property: '45678',
     };
-    const featureName3: IFeatureName = {
+    const channel3: IChannel = {
         property: '6789',
     };
 
-    const unexistingFeatureName: IFeatureName = {
+    const unexistingChannel: IChannel = {
         property: 'a',
     };
 
-    const featureNames: IFeatureName[] =
-        [featureName, featureName2, featureName3, featureName3];
+    const channels: IChannel[] =
+        [channel, channel2, channel3, channel3];
 
-    const invalidFeatureNames: IFeatureName[] =
-        [featureName, invalidFeatureName, featureName3];
+    const invalidChannels: IChannel[] =
+        [channel, invalidChannel, channel3];
 
-    // </MongoDB>
     before(async function () {
-        // <MongoDB>
+        
         await mongoose.connect(`mongodb://${config.db.host}:${config.db.port}/${config.db.name}`, { useNewUrlParser: true });
-        // </MongoDB>
         server = Server.bootstrap();
     });
 
-    // <MongoDB>
+    
     after(async function () {
         await mongoose.connection.db.dropDatabase();
     });
-    // </MongoDB>
-
-    describe('#POST /api/featureName/', function () {
+    describe('#POST /api/channel/', function () {
         context('When request is valid', function () {
-            // <MongoDB>
+            
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
             });
-            // </MongoDB>
-
-            it('Should return created featureName', function (done: MochaDone) {
+            it('Should return created channel', function (done: MochaDone) {
                 request(server.app)
-                    .post('/api/featureName/')
-                    .send(featureName)
-                    // <Authentication using JWT>
+                    .post('/api/channel/')
+                    .send(channel)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -87,19 +78,16 @@ describe('FeatureName Router Module', function () {
         });
 
         context('When request is invalid', function () {
-            // <MongoDB>
+            
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
             });
-            // </MongoDB>
-
             it('Should return error status when property is invalid', function (done: MochaDone) {
                 request(server.app)
-                    .post('/api/featureName/')
-                    .send(invalidFeatureName)
-                    // <Authentication using JWT>
+                    .post('/api/channel/')
+                    .send(invalidChannel)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(400)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -115,20 +103,19 @@ describe('FeatureName Router Module', function () {
             });
         });
     });
-    // <MongoDB>
-    describe('#POST /api/featureName/many/', function () {
+    
+    describe('#POST /api/channel/many/', function () {
         context('When request is valid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
             });
 
-            it('Should return created featureName', function (done: MochaDone) {
+            it('Should return created channel', function (done: MochaDone) {
                 request(server.app)
-                    .post('/api/featureName/many/')
-                    .send(featureNames)
-                    // <Authentication using JWT>
+                    .post('/api/channel/many/')
+                    .send(channels)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -137,7 +124,7 @@ describe('FeatureName Router Module', function () {
                         expect(res.status).to.equal(200);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('array');
-                        expect(res.body[1]).to.have.property('property', featureNames[1].property);
+                        expect(res.body[1]).to.have.property('property', channels[1].property);
 
                         done();
                     });
@@ -151,11 +138,10 @@ describe('FeatureName Router Module', function () {
 
             it('Should return error status when property is invalid', function (done: MochaDone) {
                 request(server.app)
-                    .post('/api/featureName/many/')
-                    .send(invalidFeatureNames)
-                    // <Authentication using JWT>
+                    .post('/api/channel/many/')
+                    .send(invalidChannels)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(400)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -172,23 +158,22 @@ describe('FeatureName Router Module', function () {
         });
     });
 
-    describe('#PUT /api/featureName/many', function () {
-        let returnedFeatureNames: any;
+    describe('#PUT /api/channel/many', function () {
+        let returnedChannels: any;
 
         context('When request is valid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureNames = await FeatureNameManager.createMany(featureNames);
+                returnedChannels = await ChannelManager.createMany(channels);
             });
 
-            it('Should return updated featureName', function (done: MochaDone) {
+            it('Should return updated channel', function (done: MochaDone) {
                 request(server.app)
-                    .put('/api/featureName/many')
-                    .query(featureName)
-                    .send(featureName2)
-                    // <Authentication using JWT>
+                    .put('/api/channel/many')
+                    .query(channel)
+                    .send(channel2)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -206,20 +191,19 @@ describe('FeatureName Router Module', function () {
 
             it('Should return 404 error status code', function (done: MochaDone) {
                 request(server.app)
-                    .put('/api/featureName/many')
-                    .query(unexistingFeatureName)
-                    .send(featureName)
-                    // <Authentication using JWT>
+                    .put('/api/channel/many')
+                    .query(unexistingChannel)
+                    .send(channel)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(404)
                     .end((error: Error, res: request.Response) => {
                         expect(res).to.exist;
                         expect(res.status).to.equal(404);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('type', FeatureNameNotFoundError.name);
-                        expect(res.body).to.have.property('message', new FeatureNameNotFoundError().message);
+                        expect(res.body).to.have.property('type', ChannelNotFoundError.name);
+                        expect(res.body).to.have.property('message', new ChannelNotFoundError().message);
 
                         done();
                     });
@@ -229,17 +213,16 @@ describe('FeatureName Router Module', function () {
         context('When request is invalid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureNames = await FeatureNameManager.createMany(featureNames);
+                returnedChannels = await ChannelManager.createMany(channels);
             });
 
             it('Should return error status when property is invalid', function (done: MochaDone) {
                 request(server.app)
-                    .put('/api/featureName/many')
-                    .query(featureName2)
-                    .send(invalidFeatureName)
-                    // <Authentication using JWT>
+                    .put('/api/channel/many')
+                    .query(channel2)
+                    .send(invalidChannel)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(400)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -256,22 +239,21 @@ describe('FeatureName Router Module', function () {
         });
     });
 
-    describe('#PUT /api/featureName/:id', function () {
-        let returnedFeatureName: any;
+    describe('#PUT /api/channel/:id', function () {
+        let returnedChannel: any;
 
         context('When request is valid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureName = await FeatureNameManager.create(featureName);
+                returnedChannel = await ChannelManager.create(channel);
             });
 
-            it('Should return updated featureName', function (done: MochaDone) {
+            it('Should return updated channel', function (done: MochaDone) {
                 request(server.app)
-                    .put(`/api/featureName/${returnedFeatureName.id}`)
-                    .send(featureName)
-                    // <Authentication using JWT>
+                    .put(`/api/channel/${returnedChannel.id}`)
+                    .send(channel)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -280,7 +262,7 @@ describe('FeatureName Router Module', function () {
                         expect(res.status).to.equal(200);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('property', featureName.property);
+                        expect(res.body).to.have.property('property', channel.property);
 
                         done();
                     });
@@ -288,11 +270,10 @@ describe('FeatureName Router Module', function () {
 
             it('Should return error status when id is not found', function (done: MochaDone) {
                 request(server.app)
-                    .put(`/api/featureName/${new mongoose.Types.ObjectId()}`)
-                    .send(featureName)
-                    // <Authentication using JWT>
+                    .put(`/api/channel/${new mongoose.Types.ObjectId()}`)
+                    .send(channel)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(404)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -300,8 +281,8 @@ describe('FeatureName Router Module', function () {
                         expect(res.status).to.equal(404);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('type', FeatureNameNotFoundError.name);
-                        expect(res.body).to.have.property('message', new FeatureNameNotFoundError().message);
+                        expect(res.body).to.have.property('type', ChannelNotFoundError.name);
+                        expect(res.body).to.have.property('message', new ChannelNotFoundError().message);
 
                         done();
                     });
@@ -311,16 +292,15 @@ describe('FeatureName Router Module', function () {
         context('When request is invalid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureName = await FeatureNameManager.create(featureName);
+                returnedChannel = await ChannelManager.create(channel);
             });
 
             it('Should return error status when id is invalid', function (done: MochaDone) {
                 request(server.app)
-                    .put('/api/featureName/2')
-                    .send(featureName)
-                    // <Authentication using JWT>
+                    .put('/api/channel/2')
+                    .send(channel)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(400)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -337,11 +317,10 @@ describe('FeatureName Router Module', function () {
 
             it('Should return error status when property is invalid', function (done: MochaDone) {
                 request(server.app)
-                    .put(`/api/featureName/${returnedFeatureName.id}`)
-                    .send(invalidFeatureName)
-                    // <Authentication using JWT>
+                    .put(`/api/channel/${returnedChannel.id}`)
+                    .send(invalidChannel)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(400)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -358,21 +337,20 @@ describe('FeatureName Router Module', function () {
         });
     });
 
-    describe('#DELETE /api/featureName/:id', function () {
-        let returnedFeatureName: any;
+    describe('#DELETE /api/channel/:id', function () {
+        let returnedChannel: any;
 
         context('When request is valid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureName = await FeatureNameManager.create(featureName);
+                returnedChannel = await ChannelManager.create(channel);
             });
 
-            it('Should return updated featureName', function (done: MochaDone) {
+            it('Should return updated channel', function (done: MochaDone) {
                 request(server.app)
-                    .delete(`/api/featureName/${returnedFeatureName.id}`)
-                    // <Authentication using JWT>
+                    .delete(`/api/channel/${returnedChannel.id}`)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -381,7 +359,7 @@ describe('FeatureName Router Module', function () {
                         expect(res.status).to.equal(200);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('property', featureName.property);
+                        expect(res.body).to.have.property('property', channel.property);
 
                         done();
                     });
@@ -389,10 +367,9 @@ describe('FeatureName Router Module', function () {
 
             it('Should return error status when id not found', function (done: MochaDone) {
                 request(server.app)
-                    .delete(`/api/featureName/${new mongoose.Types.ObjectId()}`)
-                    // <Authentication using JWT>
+                    .delete(`/api/channel/${new mongoose.Types.ObjectId()}`)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(404)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -400,8 +377,8 @@ describe('FeatureName Router Module', function () {
                         expect(res.status).to.equal(404);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('type', FeatureNameNotFoundError.name);
-                        expect(res.body).to.have.property('message', new FeatureNameNotFoundError().message);
+                        expect(res.body).to.have.property('type', ChannelNotFoundError.name);
+                        expect(res.body).to.have.property('message', new ChannelNotFoundError().message);
 
                         done();
                     });
@@ -411,15 +388,14 @@ describe('FeatureName Router Module', function () {
         context('When request is invalid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureName = await FeatureNameManager.create(featureName);
+                returnedChannel = await ChannelManager.create(channel);
             });
 
             it('Should return error status when id is invalid', function (done: MochaDone) {
                 request(server.app)
-                    .delete(`/api/featureName/${invalidId}`)
-                    // <Authentication using JWT>
+                    .delete(`/api/channel/${invalidId}`)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(400)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -436,21 +412,20 @@ describe('FeatureName Router Module', function () {
         });
     });
 
-    describe('#GET /api/featureName/one', function () {
-        let returnedFeatureNames: any;
+    describe('#GET /api/channel/one', function () {
+        let returnedChannels: any;
 
         context('When request is valid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureNames = await FeatureNameManager.createMany(featureNames);
+                returnedChannels = await ChannelManager.createMany(channels);
             });
 
-            it('Should return featureName', function (done: MochaDone) {
+            it('Should return channel', function (done: MochaDone) {
                 request(server.app)
-                    .get(`/api/featureName/one?property=${featureName3.property}`)
-                    // <Authentication using JWT>
+                    .get(`/api/channel/one?property=${channel3.property}`)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -459,18 +434,17 @@ describe('FeatureName Router Module', function () {
                         expect(res.status).to.equal(200);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('property', featureNames[2].property);
+                        expect(res.body).to.have.property('property', channels[2].property);
 
                         done();
                     });
             });
 
-            it('Should return error when featureName not found', function (done: MochaDone) {
+            it('Should return error when channel not found', function (done: MochaDone) {
                 request(server.app)
-                    .get(`/api/featureName/one?property=${unexistingFeatureName.property}`)
-                    // <Authentication using JWT>
+                    .get(`/api/channel/one?property=${unexistingChannel.property}`)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(404)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -478,8 +452,8 @@ describe('FeatureName Router Module', function () {
                         expect(res.status).to.equal(404);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('type', FeatureNameNotFoundError.name);
-                        expect(res.body).to.have.property('message', new FeatureNameNotFoundError().message);
+                        expect(res.body).to.have.property('type', ChannelNotFoundError.name);
+                        expect(res.body).to.have.property('message', new ChannelNotFoundError().message);
 
                         done();
                     });
@@ -487,21 +461,20 @@ describe('FeatureName Router Module', function () {
         });
     });
 
-    describe('#GET /api/featureName/many', function () {
-        let returnedFeatureNames: any;
+    describe('#GET /api/channel/many', function () {
+        let returnedChannels: any;
 
         context('When request is valid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureNames = await FeatureNameManager.createMany(featureNames);
+                returnedChannels = await ChannelManager.createMany(channels);
             });
 
-            it('Should return featureName', function (done: MochaDone) {
+            it('Should return channel', function (done: MochaDone) {
                 request(server.app)
-                    .get(`/api/featureName/many?property=${featureName3.property}`)
-                    // <Authentication using JWT>
+                    .get(`/api/channel/many?property=${channel3.property}`)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -510,7 +483,7 @@ describe('FeatureName Router Module', function () {
                         expect(res.status).to.equal(200);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('array');
-                        expect(res.body[1]).to.have.property('property', featureNames[2].property);
+                        expect(res.body[1]).to.have.property('property', channels[2].property);
 
                         done();
                     });
@@ -518,21 +491,20 @@ describe('FeatureName Router Module', function () {
         });
     });
 
-    describe('#GET /api/featureName/amount', function () {
-        let returnedFeatureNames: any;
+    describe('#GET /api/channel/amount', function () {
+        let returnedChannels: any;
 
         context('When request is valid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureNames = await FeatureNameManager.createMany(featureNames);
+                returnedChannels = await ChannelManager.createMany(channels);
             });
 
-            it('Should return featureName', function (done: MochaDone) {
+            it('Should return channel', function (done: MochaDone) {
                 request(server.app)
-                    .get(`/api/featureName/amount?property=${featureName3.property}`)
-                    // <Authentication using JWT>
+                    .get(`/api/channel/amount?property=${channel3.property}`)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -548,21 +520,20 @@ describe('FeatureName Router Module', function () {
         });
     });
 
-    describe('#GET /api/featureName/:id', function () {
-        let returnedFeatureName: any;
+    describe('#GET /api/channel/:id', function () {
+        let returnedChannel: any;
 
         context('When request is valid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureName = await FeatureNameManager.create(featureName);
+                returnedChannel = await ChannelManager.create(channel);
             });
 
-            it('Should return featureName', function (done: MochaDone) {
+            it('Should return channel', function (done: MochaDone) {
                 request(server.app)
-                    .get(`/api/featureName/${returnedFeatureName.id}`)
-                    // <Authentication using JWT>
+                    .get(`/api/channel/${returnedChannel.id}`)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -571,18 +542,17 @@ describe('FeatureName Router Module', function () {
                         expect(res.status).to.equal(200);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('property', featureName.property);
+                        expect(res.body).to.have.property('property', channel.property);
 
                         done();
                     });
             });
 
-            it('Should return error when featureName not found', function (done: MochaDone) {
+            it('Should return error when channel not found', function (done: MochaDone) {
                 request(server.app)
-                    .get(`/api/featureName/${new mongoose.Types.ObjectId()}`)
-                    // <Authentication using JWT>
+                    .get(`/api/channel/${new mongoose.Types.ObjectId()}`)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(404)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -590,8 +560,8 @@ describe('FeatureName Router Module', function () {
                         expect(res.status).to.equal(404);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('type', FeatureNameNotFoundError.name);
-                        expect(res.body).to.have.property('message', new FeatureNameNotFoundError().message);
+                        expect(res.body).to.have.property('type', ChannelNotFoundError.name);
+                        expect(res.body).to.have.property('message', new ChannelNotFoundError().message);
 
                         done();
                     });
@@ -601,15 +571,14 @@ describe('FeatureName Router Module', function () {
         context('When request is invalid', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
-                returnedFeatureName = await FeatureNameManager.create(featureName);
+                returnedChannel = await ChannelManager.create(channel);
             });
 
             it('Should return error status when id is invalid', function (done: MochaDone) {
                 request(server.app)
-                    .get(`/api/featureName/${invalidId}`)
-                    // <Authentication using JWT>
+                    .get(`/api/channel/${invalidId}`)
+                    
                     .set({ authorization: authorizationHeader })
-                    // </Authentication using JWT>
                     .expect(400)
                     .expect('Content-Type', /json/)
                     .end((error: Error, res: request.Response) => {
@@ -625,5 +594,4 @@ describe('FeatureName Router Module', function () {
             });
         });
     });
-    // </MongoDB>
-});
+    });

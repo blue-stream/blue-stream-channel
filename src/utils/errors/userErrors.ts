@@ -12,8 +12,8 @@ export class IdInvalidError extends UserError {
     }
 }
 
-export class FeatureNameNotFoundError extends UserError {
+export class ChannelNotFoundError extends UserError {
     constructor(message?: string) {
-        super(message || `FeatureName not found`, 404);
+        super(message || `Channel not found`, 404);
     }
 }

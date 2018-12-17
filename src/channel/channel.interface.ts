@@ -1,4 +1,4 @@
-export interface IFeatureName {
+export interface IChannel {
     id?: string;
     property: string;
 }

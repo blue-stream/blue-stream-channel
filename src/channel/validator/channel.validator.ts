@@ -1,40 +1,40 @@
 import { Request, Response, NextFunction } from 'express';
-import { FeatureNameValidations } from './FEATURE_NAME.validations';
+import { ChannelValidations } from './channel.validations';
 import { PropertyInvalidError, IdInvalidError } from '../../utils/errors/userErrors';
-import { IFeatureName } from '../FEATURE_NAME.interface';
+import { IChannel } from '../channel.interface';
 
-export class FeatureNameValidator {
+export class ChannelValidator {
 
     static canCreate(req: Request, res: Response, next: NextFunction) {
-        next(FeatureNameValidator.validateProperty(req.body.property));
+        next(ChannelValidator.validateProperty(req.body.property));
     }
 
-    // <MongoDB>
+    
     static canCreateMany(req: Request, res: Response, next: NextFunction) {
-        const propertiesValidations: (Error | undefined)[] = req.body.map((featureName: IFeatureName) => {
-            return FeatureNameValidator.validateProperty(featureName.property);
+        const propertiesValidations: (Error | undefined)[] = req.body.map((channel: IChannel) => {
+            return ChannelValidator.validateProperty(channel.property);
         });
 
-        next(FeatureNameValidator.getNextValueFromArray(propertiesValidations));
+        next(ChannelValidator.getNextValueFromArray(propertiesValidations));
     }
 
     static canUpdateById(req: Request, res: Response, next: NextFunction) {
         next(
-            FeatureNameValidator.validateId(req.params.id) ||
-            FeatureNameValidator.validateProperty(req.body.property));
+            ChannelValidator.validateId(req.params.id) ||
+            ChannelValidator.validateProperty(req.body.property));
     }
 
     static canUpdateMany(req: Request, res: Response, next: NextFunction) {
-        next(FeatureNameValidator.validateProperty(req.query.property) ||
-            FeatureNameValidator.validateProperty(req.body.property));
+        next(ChannelValidator.validateProperty(req.query.property) ||
+            ChannelValidator.validateProperty(req.body.property));
     }
 
     static canDeleteById(req: Request, res: Response, next: NextFunction) {
-        next(FeatureNameValidator.validateId(req.params.id));
+        next(ChannelValidator.validateId(req.params.id));
     }
 
     static canGetById(req: Request, res: Response, next: NextFunction) {
-        next(FeatureNameValidator.validateId(req.params.id));
+        next(ChannelValidator.validateId(req.params.id));
     }
 
     static canGetOne(req: Request, res: Response, next: NextFunction) {
@@ -50,7 +50,7 @@ export class FeatureNameValidator {
     }
 
     private static validateId(id: string) {
-        if (!FeatureNameValidations.isIdValid(id)) {
+        if (!ChannelValidations.isIdValid(id)) {
             return new IdInvalidError();
         }
 
@@ -69,9 +69,8 @@ export class FeatureNameValidator {
         return nextValue;
     }
 
-    // </MongoDB>
     private static validateProperty(property: string) {
-        if (!FeatureNameValidations.isPropertyValid(property)) {
+        if (!ChannelValidations.isPropertyValid(property)) {
             return new PropertyInvalidError();
         }
 
