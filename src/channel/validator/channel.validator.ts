@@ -1,32 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
 import { ChannelValidations } from './channel.validations';
-import { PropertyInvalidError, IdInvalidError } from '../../utils/errors/userErrors';
-import { IChannel } from '../channel.interface';
+import { IdInvalidError, DescriptionInvalidError, NameInvalidError, UserInvalidError } from '../../utils/errors/userErrors';
 
 export class ChannelValidator {
 
     static canCreate(req: Request, res: Response, next: NextFunction) {
-        next(ChannelValidator.validateProperty(req.body.property));
+        next(
+            ChannelValidator.validateUser(req.body.user) ||
+            ChannelValidator.validateName(req.body.name) ||
+            ChannelValidator.validateDescription(req.body.description),
+        );
     }
 
-    
-    static canCreateMany(req: Request, res: Response, next: NextFunction) {
-        const propertiesValidations: (Error | undefined)[] = req.body.map((channel: IChannel) => {
-            return ChannelValidator.validateProperty(channel.property);
-        });
-
-        next(ChannelValidator.getNextValueFromArray(propertiesValidations));
-    }
-
-    static canUpdateById(req: Request, res: Response, next: NextFunction) {
+    static canUpdateNameById(req: Request, res: Response, next: NextFunction) {
         next(
             ChannelValidator.validateId(req.params.id) ||
-            ChannelValidator.validateProperty(req.body.property));
+            ChannelValidator.validateName(req.body.name));
     }
 
-    static canUpdateMany(req: Request, res: Response, next: NextFunction) {
-        next(ChannelValidator.validateProperty(req.query.property) ||
-            ChannelValidator.validateProperty(req.body.property));
+    static canUpdateDescriptionById(req: Request, res: Response, next: NextFunction) {
+        next(
+            ChannelValidator.validateId(req.params.id) ||
+            ChannelValidator.validateDescription(req.body.description));
     }
 
     static canDeleteById(req: Request, res: Response, next: NextFunction) {
@@ -57,21 +52,25 @@ export class ChannelValidator {
         return undefined;
     }
 
-    private static getNextValueFromArray(validationsArray: (Error | undefined)[]) {
-        let nextValue: Error | undefined;
-
-        for (let index = 0; index < validationsArray.length; index++) {
-            if (validationsArray[index] !== undefined) {
-                nextValue = validationsArray[index];
-            }
+    private static validateUser(user: string) {
+        if (!ChannelValidations.isUserValid(user)) {
+            return new UserInvalidError();
         }
 
-        return nextValue;
+        return undefined;
     }
 
-    private static validateProperty(property: string) {
-        if (!ChannelValidations.isPropertyValid(property)) {
-            return new PropertyInvalidError();
+    private static validateName(name: string) {
+        if (!ChannelValidations.isNameValid(name)) {
+            return new NameInvalidError();
+        }
+
+        return undefined;
+    }
+
+    private static validateDescription(description: string) {
+        if (!ChannelValidations.isDescriptionValid(description)) {
+            return new DescriptionInvalidError();
         }
 
         return undefined;

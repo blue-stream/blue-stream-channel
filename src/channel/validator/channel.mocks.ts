@@ -7,20 +7,25 @@ import { config } from '../../config';
 export const responseMock = createResponse();
 
 export class ValidRequestMocks {
-    readonly validProperty: string = '12345';
-    readonly validProperty2: string = '23456';
-    readonly validProperty3: string = '34567';
-
     readonly channel = {
-        property: this.validProperty,
+        id: new Types.ObjectId(),
+        user: 'a@a',
+        name: 'test channel',
+        description: 'test description',
     };
 
     readonly channel2 = {
-        property: this.validProperty2,
+        id: new Types.ObjectId(),
+        user: 'a@b',
+        name: 'test channel 2',
+        description: 'test description 2',
     };
 
     readonly channel3 = {
-        property: this.validProperty3,
+        id: new Types.ObjectId(),
+        user: 'a@c',
+        name: 'test channel 3',
+        description: 'test description 3',
     };
 
     readonly channelFilter = this.channel;
@@ -36,22 +41,7 @@ export class ValidRequestMocks {
         body: this.channel,
     });
 
-    // <MongoDB>
-
-    createMany = createRequest({
-        method: 'POST',
-        url: '/api/channel/many/',
-        headers: {
-            authorization: this.authorizationHeader,
-        },
-        body: [
-            this.channel,
-            this.channel2,
-            this.channel3,
-        ],
-    });
-
-    updateById = createRequest({
+    updateNameById = createRequest({
         method: 'PUT',
         url: '/api/channel/:id',
         headers: {
@@ -59,19 +49,20 @@ export class ValidRequestMocks {
         },
         params: {
             id: new Types.ObjectId(),
-            id_REMOVE: '12345',
         },
-        body: this.channel,
+        body: { name: this.channel.name },
     });
 
-    updateMany = createRequest({
+    updateDescriptionById = createRequest({
         method: 'PUT',
-        url: '/api/channel/many',
+        url: '/api/channel/:id',
         headers: {
             authorization: this.authorizationHeader,
         },
-        query: this.channelFilter,
-        body: this.channel,
+        params: {
+            id: new Types.ObjectId(),
+        },
+        body: { description: this.channel.description },
     });
 
     deleteById = createRequest({
@@ -96,18 +87,9 @@ export class ValidRequestMocks {
         },
     });
 
-    getOne = createRequest({
-        method: 'GET',
-        url: `/api/channel/one?channelFilter={'property':${this.validProperty}}`,
-        headers: {
-            authorization: this.authorizationHeader,
-        },
-        query: this.channel,
-    });
-
     getMany = createRequest({
         method: 'GET',
-        url: `/api/channel/many?channelFilter={'property':${this.validProperty}}`,
+        url: '/api/channel/many',
         headers: {
             authorization: this.authorizationHeader,
         },
@@ -116,11 +98,10 @@ export class ValidRequestMocks {
 
     getAmount = createRequest({
         method: 'GET',
-        url: `/api/channel/amount?channelFilter={'property':${this.validProperty}}`,
+        url: '/api/channel/amount',
         headers: {
             authorization: this.authorizationHeader,
         },
         query: this.channel,
     });
-    // <MongoDB>
 }

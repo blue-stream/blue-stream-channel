@@ -21,7 +21,7 @@ export const config = {
         username: process.env.RMQ_USERNAME || 'guest',
     },
     server: {
-        port:  +(process.env.PORT || 3000),
+        port: +(process.env.PORT || 3000),
         name: 'channel',
     },
     cors: {
@@ -30,5 +30,15 @@ export const config = {
     authentication: {
         required: true,
         secret: process.env.SECRET_KEY || 'bLue5tream@2018', // Don't use static value in production! remove from source control!
+    },
+    channel: {
+        name: {
+            minLength: +(process.env.NAME_MAX_LENGTH || 2),
+            maxLength: +(process.env.NAME_MAX_LENGTH || 32),
+        },
+        description: {
+            minLength: +(process.env.DESCRIPTION_MAX_LENGTH || 2),
+            maxLength: +(process.env.DESCRIPTION_MAX_LENGTH || 32),
+        },
     },
 };

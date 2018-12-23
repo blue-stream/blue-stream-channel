@@ -10,12 +10,8 @@ export class ChannelController {
         res.json(await ChannelManager.create(req.body));
     }
 
-    static async createMany(req: Request, res: Response) {
-        res.json(await ChannelManager.createMany(req.body));
-    }
-
-    static async updateById(req: Request, res: Response) {
-        const updated = await ChannelManager.updateById(req.params.id, req.body.channel);
+    static async updateNameById(req: Request, res: Response) {
+        const updated = await ChannelManager.updateNameById(req.params.id, req.body.name);
         if (!updated) {
             throw new ChannelNotFoundError();
         }
@@ -23,11 +19,9 @@ export class ChannelController {
         res.json(updated);
     }
 
-    static async updateMany(req: Request, res: Response) {
-
-        const updated: UpdateResponse = await ChannelManager.updateMany(req.query, req.body);
-
-        if (updated.n === 0) {
+    static async updateDescriptionById(req: Request, res: Response) {
+        const updated = await ChannelManager.updateDescriptionById(req.params.id, req.body.description);
+        if (!updated) {
             throw new ChannelNotFoundError();
         }
 
@@ -45,15 +39,6 @@ export class ChannelController {
 
     static async getById(req: Request, res: Response) {
         const channel = await ChannelManager.getById(req.params.id);
-        if (!channel) {
-            throw new ChannelNotFoundError();
-        }
-
-        res.json(channel);
-    }
-
-    static async getOne(req: Request, res: Response) {
-        const channel = await ChannelManager.getOne(req.query);
         if (!channel) {
             throw new ChannelNotFoundError();
         }

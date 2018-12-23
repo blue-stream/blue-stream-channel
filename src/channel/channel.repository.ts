@@ -50,16 +50,6 @@ export class ChannelRepository {
         ).exec();
     }
 
-    static getOne(channelFilter: Partial<IChannel>)
-        : Promise<IChannel | null> {
-        if (Object.keys(channelFilter).length === 0) {
-            throw new ServerError('Filter is required.');
-        }
-        return ChannelModel.findOne(
-            channelFilter,
-        ).exec();
-    }
-
     static getMany(channelFilter: Partial<IChannel>)
         : Promise<IChannel[]> {
         return ChannelModel.find(

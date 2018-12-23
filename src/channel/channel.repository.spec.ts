@@ -8,16 +8,43 @@ import { ChannelRepository } from './channel.repository';
 
 const validId: string = new mongoose.Types.ObjectId().toHexString();
 const invalidId: string = 'invalid id';
+
 const channel: IChannel = {
-    property: 'prop',
+    id: (new mongoose.Types.ObjectId()).toHexString(),
+    user: 'a@a',
+    name: 'fake name',
+    description: 'fake description',
 };
-const channelArr: IChannel[] = ['prop', 'prop', 'prop', 'b', 'c', 'd'].map(item => ({ property: item }));
+
+const channel2: IChannel = {
+    id: (new mongoose.Types.ObjectId()).toHexString(),
+    user: 'a@b',
+    name: 'fake name 2',
+    description: 'fake description',
+};
+
+const channel3: IChannel = {
+    id: (new mongoose.Types.ObjectId()).toHexString(),
+    user: 'a@c',
+    name: 'fake name 3',
+    description: 'fake description',
+};
+
+const channelArr: IChannel[] = [channel, channel2, channel3];
 const invalidChannel: any = {
-    property: { invalid: true },
+    id: '',
+    user: 'a',
+    name: '1',
+    description: '2',
 };
-const channelFilter: Partial<IChannel> = { property: 'prop' };
-const channelDataToUpdate: Partial<IChannel> = { property: 'updated' };
-const unexistingChannel: Partial<IChannel> = { property: 'unexisting' };
+const channelFilter: Partial<IChannel> = { name: 'fake name 1' };
+const channelDataToUpdate: Partial<IChannel> = { name: 'updated' };
+const unexistingChannel: Partial<IChannel> = {
+    id: (new mongoose.Types.ObjectId()).toHexString(),
+    user: 'a@c',
+    name: 'fake name 4',
+    description: 'fake description',
+};
 const unknownProperty: Object = { unknownProperty: true };
 
 describe('Channel Repository', function () {
@@ -38,10 +65,12 @@ describe('Channel Repository', function () {
             it('Should create channel', async function () {
                 const createdChannel = await ChannelRepository.create(channel);
                 expect(createdChannel).to.exist;
-                expect(createdChannel).to.have.property('property', 'prop');
+                expect(createdChannel).to.have.property('user', channel.user);
+                expect(createdChannel).to.have.property('name', channel.name);
+                expect(createdChannel).to.have.property('description', channel.description);
                 expect(createdChannel).to.have.property('createdAt');
                 expect(createdChannel).to.have.property('updatedAt');
-                expect(createdChannel).to.have.property('_id').which.satisfies((id: any) => {
+                expect(createdChannel).to.have.property('id').which.satisfies((id: any) => {
                     return mongoose.Types.ObjectId.isValid(id);
                 });
             });
@@ -57,10 +86,10 @@ describe('Channel Repository', function () {
                     hasThrown = true;
                     expect(err).to.exist;
                     expect(err).to.have.property('name', 'ValidationError');
-                    expect(err).to.have.property('message').that.matches(/cast.+failed/i);
+                    expect(err).to.have.property('message').that.matches(/Validator.+failed/i);
                     expect(err).to.have.property('errors');
-                    expect(err.errors).to.have.property('property');
-                    expect(err.errors.property).to.have.property('name', 'CastError');
+                    expect(err.errors).to.have.property('name');
+                    expect(err.errors.name).to.have.property('name', 'ValidatorError');
                 } finally {
                     expect(hasThrown).to.be.true;
                 }
@@ -163,7 +192,7 @@ describe('Channel Repository', function () {
                 let hasThrown = false;
 
                 try {
-                    await ChannelRepository.updateById(createdChannel.id as string, { property: null } as any);
+                    await ChannelRepository.updateById(createdChannel.id as string, { name: null } as any);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -322,7 +351,9 @@ describe('Channel Repository', function () {
                 expect(doc).to.exist;
                 expect(doc).to.have.property('id', document.id);
                 for (const prop in channel) {
-                    expect(doc).to.have.property(prop, channel[prop as keyof IChannel]);
+                    if (prop !== 'id') {
+                        expect(doc).to.have.property(prop, channel[prop as keyof IChannel]);
+                    }
                 }
             });
 
@@ -345,60 +376,6 @@ describe('Channel Repository', function () {
                 } finally {
                     expect(hasThrown).to.be.true;
                 }
-            });
-        });
-    });
-
-    describe('#getOne()', function () {
-
-        context('When data is valid', function () {
-            let document: IChannel;
-
-            beforeEach(async function () {
-                document = await ChannelRepository.create(channel);
-            });
-
-            it('Should return document by id', async function () {
-                const doc = await ChannelRepository.getOne({ _id: document.id } as Partial<IChannel>);
-                expect(doc).to.exist;
-                for (const prop in channel) {
-                    expect(doc).to.have.property(prop, channel[prop as keyof IChannel]);
-                }
-            });
-
-            it('Should return document by property', async function () {
-                const doc = await ChannelRepository.getOne(channelFilter);
-                expect(doc).to.exist;
-                expect(doc).to.have.property('id', document.id);
-                for (const prop in channel) {
-                    expect(doc).to.have.property(prop, channel[prop as keyof IChannel]);
-                }
-            });
-
-            it('Should return null when document does not exist', async function () {
-                const doc = await ChannelRepository.getOne(unexistingChannel);
-                expect(doc).to.not.exist;
-            });
-        });
-
-        context('When data is invalid', function () {
-            it('Should throw error when filter does not exist', async function () {
-                let hasThrown = false;
-
-                try {
-                    await ChannelRepository.getOne({});
-                } catch (err) {
-                    hasThrown = true;
-                    expect(err).to.exist;
-                    expect(err instanceof ServerError).to.be.true;
-                } finally {
-                    expect(hasThrown).to.be.true;
-                }
-            });
-
-            it('Should return null when filter is not in the correct format', async function () {
-                const doc = await ChannelRepository.getOne(unknownProperty);
-                expect(doc).to.not.exist;
             });
         });
     });
@@ -516,5 +493,4 @@ describe('Channel Repository', function () {
             });
         });
     });
-
 });

@@ -1,4 +1,6 @@
 export interface IChannel {
     id?: string;
-    property: string;
+    user: string;
+    name: string;
+    description: string;
 }

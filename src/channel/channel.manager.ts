@@ -3,7 +3,6 @@ import { IChannel } from './channel.interface';
 import { ChannelRepository } from './channel.repository';
 export class ChannelManager {
 
-    
     static create(channel: IChannel) {
         return ChannelRepository.create(channel);
     }
@@ -12,8 +11,12 @@ export class ChannelManager {
         return ChannelRepository.createMany(channels);
     }
 
-    static updateById(id: string, channel: Partial<IChannel>) {
-        return ChannelRepository.updateById(id, channel);
+    static updateNameById(id: string, name: string) {
+        return ChannelRepository.updateById(id, { name });
+    }
+
+    static updateDescriptionById(id: string, description: string) {
+        return ChannelRepository.updateById(id, { description });
     }
 
     static updateMany(channelFilter: Partial<IChannel>, channel: Partial<IChannel>) {
@@ -28,10 +31,6 @@ export class ChannelManager {
         return ChannelRepository.getById(id);
     }
 
-    static getOne(channelFilter: Partial<IChannel>) {
-        return ChannelRepository.getOne(channelFilter);
-    }
-
     static getMany(channelFilter: Partial<IChannel>) {
         return ChannelRepository.getMany(channelFilter);
     }
@@ -39,4 +38,4 @@ export class ChannelManager {
     static getAmount(channelFilter: Partial<IChannel>) {
         return ChannelRepository.getAmount(channelFilter);
     }
-    }
+}
