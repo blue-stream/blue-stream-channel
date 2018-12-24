@@ -1,6 +1,7 @@
 import { IChannel } from './channel.interface';
 
 import { ChannelRepository } from './channel.repository';
+import { ChannelBroker } from './channel.broker';
 export class ChannelManager {
 
     static create(channel: IChannel) {
@@ -23,8 +24,14 @@ export class ChannelManager {
         return ChannelRepository.updateMany(channelFilter, channel);
     }
 
-    static deleteById(id: string) {
-        return ChannelRepository.deleteById(id);
+    static async deleteById(id: string) {
+        const removed: IChannel | null = await ChannelRepository.deleteById(id);
+
+        if (removed) {
+            ChannelBroker.publish('channelService.channel.remove.succeeded', { id });
+        }
+
+        return removed;
     }
 
     static getById(id: string) {
