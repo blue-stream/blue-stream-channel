@@ -77,10 +77,10 @@ describe('Channel Validator Middleware', function () {
         });
     });
 
-    describe('UpdateNameById Validator', function () {
+    describe('UpdateById Validator', function () {
         context('When valid arguments are passed', function () {
             it('Should not throw an error', function () {
-                ChannelValidator.canUpdateNameById(new ValidRequestMocks().updateNameById, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(new ValidRequestMocks().updateById, responseMock, (error: Error) => {
                     expect(error).to.not.exist;
                 });
             });
@@ -88,132 +88,120 @@ describe('Channel Validator Middleware', function () {
 
         context('When invalid arguments are passed', function () {
             it('Should throw an NameInvalidError When Name is undefined', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateNameById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.body.name = undefined;
 
-                ChannelValidator.canUpdateNameById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(NameInvalidError);
                 });
             });
 
             it('Should throw an NameInvalidError When Name is null', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateNameById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.body.name = null;
 
-                ChannelValidator.canUpdateNameById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(NameInvalidError);
                 });
             });
 
             it('Should throw an NameInvalidError When Name is too long', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateNameById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.body.name = '1'.repeat(config.channel.name.maxLength + 1);
 
-                ChannelValidator.canUpdateNameById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(NameInvalidError);
                 });
             });
 
             it('Should throw an IdInvalidError When id is undefined', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateNameById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.params.id = undefined;
 
-                ChannelValidator.canUpdateNameById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(IdInvalidError);
                 });
             });
 
             it('Should throw an IdInvalidError When id is null', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateNameById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.params.id = null;
 
-                ChannelValidator.canUpdateNameById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(IdInvalidError);
                 });
             });
 
             it('Should throw an IdInvalidError When id is not a valid ObjectID', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateNameById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.params.id = '1244';
 
-                ChannelValidator.canUpdateNameById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(IdInvalidError);
                 });
             });
-        });
-    });
 
-    describe('UpdateDescriptionById Validator', function () {
-        context('When valid arguments are passed', function () {
-            it('Should not throw an error', function () {
-                ChannelValidator.canUpdateDescriptionById(new ValidRequestMocks().updateDescriptionById, responseMock, (error: Error) => {
-                    expect(error).to.not.exist;
-                });
-            });
-        });
-
-        context('When invalid arguments are passed', function () {
             it('Should throw an DescriptionInvalidError When Description is undefined', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateDescriptionById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.body.description = undefined;
 
-                ChannelValidator.canUpdateDescriptionById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(DescriptionInvalidError);
                 });
             });
 
             it('Should throw an DescriptionInvalidError When Description is null', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateDescriptionById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.body.description = null;
 
-                ChannelValidator.canUpdateDescriptionById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(DescriptionInvalidError);
                 });
             });
 
             it('Should throw an DescriptionInvalidError When Description is too long', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateDescriptionById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.body.description = '1'.repeat(config.channel.description.maxLength + 1);
 
-                ChannelValidator.canUpdateDescriptionById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(DescriptionInvalidError);
                 });
             });
 
             it('Should throw an IdInvalidError When id is undefined', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateDescriptionById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.params.id = undefined;
 
-                ChannelValidator.canUpdateDescriptionById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(IdInvalidError);
                 });
             });
 
             it('Should throw an IdInvalidError When id is null', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateDescriptionById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.params.id = null;
 
-                ChannelValidator.canUpdateDescriptionById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(IdInvalidError);
                 });
             });
 
             it('Should throw an IdInvalidError When id is not a valid ObjectID', function () {
-                const invalidRequestMock = new ValidRequestMocks().updateDescriptionById;
+                const invalidRequestMock = new ValidRequestMocks().updateById;
                 invalidRequestMock.params.id = '1244';
 
-                ChannelValidator.canUpdateDescriptionById(invalidRequestMock, responseMock, (error: Error) => {
+                ChannelValidator.canUpdateById(invalidRequestMock, responseMock, (error: Error) => {
                     expect(error).to.exist;
                     expect(error).to.be.an.instanceof(IdInvalidError);
                 });

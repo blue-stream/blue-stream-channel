@@ -12,12 +12,8 @@ export class ChannelManager {
         return ChannelRepository.createMany(channels);
     }
 
-    static updateNameById(id: string, name: string) {
-        return ChannelRepository.updateById(id, { name });
-    }
-
-    static updateDescriptionById(id: string, description: string) {
-        return ChannelRepository.updateById(id, { description });
+    static updateById(id: string, channel: Partial<IChannel>) {
+        return ChannelRepository.updateById(id, channel);
     }
 
     static updateMany(channelFilter: Partial<IChannel>, channel: Partial<IChannel>) {
@@ -38,8 +34,8 @@ export class ChannelManager {
         return ChannelRepository.getById(id);
     }
 
-    static getMany(channelFilter: Partial<IChannel>) {
-        return ChannelRepository.getMany(channelFilter);
+    static getMany(channelFilter: Partial<IChannel>, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
+        return ChannelRepository.getMany(channelFilter, startIndex, endIndex, sortOrder, sortBy);
     }
 
     static getAmount(channelFilter: Partial<IChannel>) {

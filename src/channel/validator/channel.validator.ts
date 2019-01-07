@@ -12,16 +12,11 @@ export class ChannelValidator {
         );
     }
 
-    static canUpdateNameById(req: Request, res: Response, next: NextFunction) {
+    static canUpdateById(req: Request, res: Response, next: NextFunction) {
         next(
             ChannelValidator.validateId(req.params.id) ||
+            ChannelValidator.validateDescription(req.body.description) ||
             ChannelValidator.validateName(req.body.name));
-    }
-
-    static canUpdateDescriptionById(req: Request, res: Response, next: NextFunction) {
-        next(
-            ChannelValidator.validateId(req.params.id) ||
-            ChannelValidator.validateDescription(req.body.description));
     }
 
     static canDeleteById(req: Request, res: Response, next: NextFunction) {

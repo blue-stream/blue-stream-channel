@@ -50,11 +50,14 @@ export class ChannelRepository {
         ).exec();
     }
 
-    static getMany(channelFilter: Partial<IChannel>)
+    static getMany(channelFilter: Partial<IChannel>, startIndex: number = 0, endIndex: number = 20, sortOrder: '-' | '' = '', sortBy: string = 'name')
         : Promise<IChannel[]> {
-        return ChannelModel.find(
-            channelFilter,
-        ).exec();
+        return ChannelModel
+            .find(channelFilter)
+            .sort(sortOrder + sortBy)
+            .skip(+startIndex)
+            .limit(+endIndex - +startIndex)
+            .exec();
     }
 
     static getAmount(channelFilter: Partial<IChannel>)

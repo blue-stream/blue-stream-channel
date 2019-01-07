@@ -3,6 +3,7 @@ import { ChannelManager } from './channel.manager';
 
 import { ChannelNotFoundError } from '../utils/errors/userErrors';
 import { UpdateWriteOpResult } from 'mongodb';
+import { IChannel } from './channel.interface';
 
 type UpdateResponse = UpdateWriteOpResult['result'];
 export class ChannelController {
@@ -10,17 +11,18 @@ export class ChannelController {
         res.json(await ChannelManager.create(req.body));
     }
 
-    static async updateNameById(req: Request, res: Response) {
-        const updated = await ChannelManager.updateNameById(req.params.id, req.body.name);
-        if (!updated) {
-            throw new ChannelNotFoundError();
-        }
+    static async updateById(req: Request, res: Response) {
+        const updateParams: Partial<IChannel> = {
+            name: req.body.name,
+            description: req.body.description,
+        };
 
-        res.json(updated);
-    }
+        Object.keys(updateParams).forEach((key: string) => {
+            return updateParams[key as keyof IChannel] ===
+                undefined && delete updateParams[key as keyof IChannel];
+        });
 
-    static async updateDescriptionById(req: Request, res: Response) {
-        const updated = await ChannelManager.updateDescriptionById(req.params.id, req.body.description);
+        const updated = await ChannelManager.updateById(req.params.id, updateParams);
         if (!updated) {
             throw new ChannelNotFoundError();
         }
@@ -47,7 +49,18 @@ export class ChannelController {
     }
 
     static async getMany(req: Request, res: Response) {
-        res.json(await ChannelManager.getMany(req.query));
+        const channelFilter: Partial<IChannel> = {
+            name: req.query.name,
+            description: req.query.description,
+            user: req.query.user,
+        };
+
+        Object.keys(channelFilter).forEach((key: string) => {
+            return channelFilter[key as keyof IChannel] ===
+                undefined && delete channelFilter[key as keyof IChannel];
+        });
+
+        res.json(await ChannelManager.getMany(channelFilter, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
     }
 
     static async getAmount(req: Request, res: Response) {

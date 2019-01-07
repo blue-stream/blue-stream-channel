@@ -41,7 +41,7 @@ export class ValidRequestMocks {
         body: this.channel,
     });
 
-    updateNameById = createRequest({
+    updateById = createRequest({
         method: 'PUT',
         url: '/api/channel/:id',
         headers: {
@@ -50,19 +50,10 @@ export class ValidRequestMocks {
         params: {
             id: new Types.ObjectId(),
         },
-        body: { name: this.channel.name },
-    });
-
-    updateDescriptionById = createRequest({
-        method: 'PUT',
-        url: '/api/channel/:id',
-        headers: {
-            authorization: this.authorizationHeader,
+        body: {
+            description: this.channel.description,
+            name: this.channel.name,
         },
-        params: {
-            id: new Types.ObjectId(),
-        },
-        body: { description: this.channel.description },
     });
 
     deleteById = createRequest({

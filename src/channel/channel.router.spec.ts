@@ -120,7 +120,7 @@ describe('Channel Router Module', function () {
         });
     });
 
-    describe('#PUT /api/channel/:id/name', function () {
+    describe('#PUT /api/channel/:id', function () {
         let returnedChannel: any;
 
         context('When request is valid', function () {
@@ -131,9 +131,8 @@ describe('Channel Router Module', function () {
 
             it('Should return updated channel', function (done: MochaDone) {
                 request(server.app)
-                    .put(`/api/channel/${returnedChannel.id}/name`)
+                    .put(`/api/channel/${returnedChannel.id}`)
                     .send(channel)
-
                     .set({ authorization: authorizationHeader })
                     .expect(200)
                     .expect('Content-Type', /json/)
@@ -151,9 +150,8 @@ describe('Channel Router Module', function () {
 
             it('Should return error status when id is not found', function (done: MochaDone) {
                 request(server.app)
-                    .put(`/api/channel/${new mongoose.Types.ObjectId()}/name`)
+                    .put(`/api/channel/${new mongoose.Types.ObjectId()}`)
                     .send(channel)
-
                     .set({ authorization: authorizationHeader })
                     .expect(404)
                     .expect('Content-Type', /json/)
@@ -178,105 +176,7 @@ describe('Channel Router Module', function () {
 
             it('Should return error status when id is invalid', function (done: MochaDone) {
                 request(server.app)
-                    .put('/api/channel/2/name')
-                    .send(channel)
-
-                    .set({ authorization: authorizationHeader })
-                    .expect(400)
-                    .expect('Content-Type', /json/)
-                    .end((error: Error, res: request.Response) => {
-                        expect(error).to.not.exist;
-                        expect(res.status).to.equal(400);
-                        expect(res).to.have.property('body');
-                        expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('type', IdInvalidError.name);
-                        expect(res.body).to.have.property('message', new IdInvalidError().message);
-
-                        done();
-                    });
-            });
-
-            it('Should return error status when name is invalid', function (done: MochaDone) {
-                request(server.app)
-                    .put(`/api/channel/${returnedChannel.id}/name`)
-                    .send(invalidChannel)
-
-                    .set({ authorization: authorizationHeader })
-                    .expect(400)
-                    .expect('Content-Type', /json/)
-                    .end((error: Error, res: request.Response) => {
-                        expect(error).to.not.exist;
-                        expect(res.status).to.equal(400);
-                        expect(res).to.have.property('body');
-                        expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('type', NameInvalidError.name);
-                        expect(res.body).to.have.property('message', new NameInvalidError().message);
-
-                        done();
-                    });
-            });
-        });
-    });
-
-    describe('#PUT /api/channel/:id/description', function () {
-        let returnedChannel: any;
-
-        context('When request is valid', function () {
-            beforeEach(async function () {
-                await mongoose.connection.db.dropDatabase();
-                returnedChannel = await ChannelManager.create(channel);
-            });
-
-            it('Should return updated channel', function (done: MochaDone) {
-                request(server.app)
-                    .put(`/api/channel/${returnedChannel.id}/description`)
-                    .send(channel)
-
-                    .set({ authorization: authorizationHeader })
-                    .expect(200)
-                    .expect('Content-Type', /json/)
-                    .end((error: Error, res: request.Response) => {
-                        expect(error).to.not.exist;
-                        expect(res).to.exist;
-                        expect(res.status).to.equal(200);
-                        expect(res).to.have.property('body');
-                        expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('description', channel.description);
-
-                        done();
-                    });
-            });
-
-            it('Should return error status when id is not found', function (done: MochaDone) {
-                request(server.app)
-                    .put(`/api/channel/${new mongoose.Types.ObjectId()}/description`)
-                    .send(channel)
-
-                    .set({ authorization: authorizationHeader })
-                    .expect(404)
-                    .expect('Content-Type', /json/)
-                    .end((error: Error, res: request.Response) => {
-                        expect(error).to.not.exist;
-                        expect(res.status).to.equal(404);
-                        expect(res).to.have.property('body');
-                        expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('type', ChannelNotFoundError.name);
-                        expect(res.body).to.have.property('message', new ChannelNotFoundError().message);
-
-                        done();
-                    });
-            });
-        });
-
-        context('When request is invalid', function () {
-            beforeEach(async function () {
-                await mongoose.connection.db.dropDatabase();
-                returnedChannel = await ChannelManager.create(channel);
-            });
-
-            it('Should return error status when id is invalid', function (done: MochaDone) {
-                request(server.app)
-                    .put('/api/channel/2/description')
+                    .put('/api/channel/2')
                     .send(channel)
 
                     .set({ authorization: authorizationHeader })
@@ -296,7 +196,7 @@ describe('Channel Router Module', function () {
 
             it('Should return error status when description is invalid', function (done: MochaDone) {
                 request(server.app)
-                    .put(`/api/channel/${returnedChannel.id}/description`)
+                    .put(`/api/channel/${returnedChannel.id}`)
                     .send(invalidChannel)
 
                     .set({ authorization: authorizationHeader })
