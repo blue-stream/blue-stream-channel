@@ -25,6 +25,10 @@ const channelSchema: mongoose.Schema = new mongoose.Schema(
             minlength: config.channel.description.minLength,
             maxlength: config.channel.description.maxLength,
         },
+        isProfile: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         versionKey: false,

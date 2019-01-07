@@ -3,4 +3,5 @@ export interface IChannel {
     user: string;
     name: string;
     description: string;
+    isProfile?: boolean;
 }
