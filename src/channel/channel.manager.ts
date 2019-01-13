@@ -30,6 +30,19 @@ export class ChannelManager {
         return removed;
     }
 
+    static getSearched(
+        searchFilter: string,
+        startIndex?: number,
+        endIndex?: number,
+        sortOrder?: '-' | '',
+        sortBy?: string) {
+        return ChannelRepository.getSearched(searchFilter, startIndex, endIndex, sortOrder, sortBy);
+    }
+
+    static getSearchedAmount(searchFilter: string) {
+        return ChannelRepository.getSearchedAmount(searchFilter);
+    }
+
     static getById(id: string) {
         return ChannelRepository.getById(id);
     }

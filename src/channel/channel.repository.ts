@@ -2,6 +2,7 @@
 import { IChannel } from './channel.interface';
 import { ChannelModel } from './channel.model';
 import { ServerError } from '../utils/errors/applicationError';
+import { config } from '../config';
 
 export class ChannelRepository {
     static create(channel: IChannel)
@@ -50,7 +51,41 @@ export class ChannelRepository {
         ).exec();
     }
 
-    static getMany(channelFilter: Partial<IChannel>, startIndex: number = 0, endIndex: number = 20, sortOrder: '-' | '' = '', sortBy: string = 'name')
+    static getSearched(
+        searchFilter: string = '',
+        startIndex: number = 0,
+        endIndex: number = config.channel.defaultAmountOfResults,
+        sortOrder: '-' | '' = '',
+        sortBy: string = 'name') {
+        return ChannelModel.find({
+            $or: [
+                { user: { $regex: searchFilter, $options: 'i' } },
+                { name: { $regex: searchFilter, $options: 'i' } },
+                { description: { $regex: searchFilter, $options: 'i' } },
+            ],
+        })
+            .sort(sortOrder + sortBy)
+            .skip(+startIndex)
+            .limit(endIndex - startIndex)
+            .exec();
+    }
+
+    static getSearchedAmount(searchFilter: string = '') {
+        return ChannelModel.countDocuments({
+            $or: [
+                { user: { $regex: searchFilter, $options: 'i' } },
+                { name: { $regex: searchFilter, $options: 'i' } },
+                { description: { $regex: searchFilter, $options: 'i' } },
+            ],
+        }).exec();
+    }
+
+    static getMany(
+        channelFilter: Partial<IChannel>,
+        startIndex: number = 0,
+        endIndex: number = config.channel.defaultAmountOfResults,
+        sortOrder: '-' | '' = '',
+        sortBy: string = 'name')
         : Promise<IChannel[]> {
         return ChannelModel
             .find(channelFilter)

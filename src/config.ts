@@ -38,7 +38,8 @@ export const config = {
         },
         description: {
             minLength: +(process.env.DESCRIPTION_MAX_LENGTH || 2),
-            maxLength: +(process.env.DESCRIPTION_MAX_LENGTH || 32),
+            maxLength: +(process.env.DESCRIPTION_MAX_LENGTH || 128),
         },
+        defaultAmountOfResults: +(process.env.DEFAULT_RESULTS_AMOUNT || 20),
     },
 };

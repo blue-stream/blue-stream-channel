@@ -2,10 +2,8 @@ import { Request, Response } from 'express';
 import { ChannelManager } from './channel.manager';
 
 import { ChannelNotFoundError } from '../utils/errors/userErrors';
-import { UpdateWriteOpResult } from 'mongodb';
 import { IChannel } from './channel.interface';
 
-type UpdateResponse = UpdateWriteOpResult['result'];
 export class ChannelController {
     static async create(req: Request, res: Response) {
         res.json(await ChannelManager.create(req.body));
@@ -46,6 +44,14 @@ export class ChannelController {
         }
 
         res.json(channel);
+    }
+
+    static async getSearched(req: Request, res: Response) {
+        res.json(await ChannelManager.getSearched(req.query.searchFilter, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
+    }
+
+    static async getSearchedAmount(req: Request, res: Response) {
+        res.json(await ChannelManager.getSearchedAmount(req.query.searchFilter));
     }
 
     static async getMany(req: Request, res: Response) {

@@ -39,6 +39,14 @@ export class ChannelValidator {
         next();
     }
 
+    static canGetSearched(req: Request, res: Response, next: NextFunction) {
+        next();
+    }
+
+    static canGetSearchedAmount(req: Request, res: Response, next: NextFunction) {
+        next();
+    }
+
     private static validateId(id: string) {
         if (!ChannelValidations.isIdValid(id)) {
             return new IdInvalidError();
