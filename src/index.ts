@@ -1,10 +1,10 @@
-
 import * as mongoose from 'mongoose';
 import * as rabbit from './utils/rabbit';
 import { Server } from './server';
 import { Logger } from './utils/logger';
 import { config } from './config';
 import { syslogSeverityLevels } from 'llamajs';
+import { RPCServer } from './utils/rpc.server';
 
 process.on('uncaughtException', (err) => {
     console.error('Unhandled Exception', err.stack);
@@ -44,6 +44,12 @@ process.on('SIGINT', async () => {
     Logger.configure();
     Logger.log(syslogSeverityLevels.Informational, 'Server Started', `Port: ${config.server.port}`);
     await rabbit.connect();
+
+    console.log('Starting RPC Server');
+    RPCServer.http().listen(config.rpc.port, function () {
+        console.log(`RPC server running on port ${config.rpc.port}`);
+    });
+
     console.log('Starting server');
     const server: Server = Server.bootstrap();
 
