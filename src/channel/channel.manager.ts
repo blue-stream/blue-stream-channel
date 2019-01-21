@@ -47,6 +47,10 @@ export class ChannelManager {
         return ChannelRepository.getById(id);
     }
 
+    static getByIds(ids: string[]) {
+        return ChannelRepository.getByIds(ids);
+    }
+
     static getMany(channelFilter: Partial<IChannel>, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
         return ChannelRepository.getMany(channelFilter, startIndex, endIndex, sortOrder, sortBy);
     }

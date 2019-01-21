@@ -95,6 +95,12 @@ export class ChannelRepository {
             .exec();
     }
 
+    static getByIds(ids: string[]) {
+        return ChannelModel.find({
+            _id: { $in: ids },
+        }).exec();
+    }
+
     static getAmount(channelFilter: Partial<IChannel>)
         : Promise<number> {
         return ChannelModel
