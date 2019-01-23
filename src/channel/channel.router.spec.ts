@@ -18,7 +18,7 @@ describe('Channel Router Module', function () {
         name: 'fake name',
         description: 'fake description',
     };
-    const authorizationHeader = `Bearer ${sign('mock-user', config.authentication.secret)}`;
+    const authorizationHeader = `Bearer ${sign({ id: 'a@a' }, config.authentication.secret)}`;
     const invalidId: string = '1';
     const invalidProppertyString: string = '123456789123456789';
     const invalidChannel: IChannel = {
@@ -98,11 +98,10 @@ describe('Channel Router Module', function () {
             beforeEach(async function () {
                 await mongoose.connection.db.dropDatabase();
             });
-            it('Should return error status when user is invalid', function (done: MochaDone) {
+            it('Should return error status when name is invalid', function (done: MochaDone) {
                 request(server.app)
                     .post('/api/channel/')
                     .send(invalidChannel)
-
                     .set({ authorization: authorizationHeader })
                     .expect(400)
                     .expect('Content-Type', /json/)
@@ -111,8 +110,8 @@ describe('Channel Router Module', function () {
                         expect(res.status).to.equal(400);
                         expect(res).to.have.property('body');
                         expect(res.body).to.be.an('object');
-                        expect(res.body).to.have.property('type', UserInvalidError.name);
-                        expect(res.body).to.have.property('message', new UserInvalidError().message);
+                        expect(res.body).to.have.property('type', NameInvalidError.name);
+                        expect(res.body).to.have.property('message', new NameInvalidError().message);
 
                         done();
                     });

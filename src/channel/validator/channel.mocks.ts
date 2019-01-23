@@ -30,7 +30,7 @@ export class ValidRequestMocks {
 
     readonly channelFilter = this.channel;
 
-    authorizationHeader = `Bearer ${sign('mock-user', config.authentication.secret)}`;
+    authorizationHeader = `Bearer ${sign({ id: 'a@a' }, config.authentication.secret)}`;
 
     create = createRequest({
         method: 'POST',
@@ -39,6 +39,7 @@ export class ValidRequestMocks {
             authorization: this.authorizationHeader,
         },
         body: this.channel,
+        user: { id: 'a@a' },
     });
 
     updateById = createRequest({

@@ -6,7 +6,7 @@ export class ChannelValidator {
 
     static canCreate(req: Request, res: Response, next: NextFunction) {
         next(
-            ChannelValidator.validateUser(req.body.user) ||
+            ChannelValidator.validateUser(req.user.id) ||
             ChannelValidator.validateName(req.body.name) ||
             ChannelValidator.validateDescription(req.body.description),
         );

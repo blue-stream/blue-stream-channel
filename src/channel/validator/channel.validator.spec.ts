@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { ChannelValidator } from './channel.validator';
 import { ValidRequestMocks, responseMock } from './channel.mocks';
 import { config } from '../../config';
-import { IdInvalidError, UserInvalidError, NameInvalidError, DescriptionInvalidError } from '../../utils/errors/userErrors';
+import { IdInvalidError, NameInvalidError, DescriptionInvalidError } from '../../utils/errors/userErrors';
 
 describe('Channel Validator Middleware', function () {
     describe('Create Validator', function () {
