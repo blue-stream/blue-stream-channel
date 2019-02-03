@@ -10,20 +10,51 @@ export class UserPermissionsRepository {
         return userPermissionsModel.create(userPermissions);
     }
 
-    /*static createMany(channels: IChannel[])
-        : Promise<IChannel[]> {
-        return ChannelModel.insertMany(channels);
-    }*/
-
-    static updateByUser(userPermissions: IUserPermissions)
+    static updateOne(user: string, channel: string, permissions: PermissionTypes[])
         : Promise<IUserPermissions | null> {
         return userPermissionsModel.findOneAndUpdate(
-            { user: userPermissions },
-            { $set: { permissions: userPermissions.permissions } },
+            { user, channel },
+            { $set: { permissions } },
             { new: true, runValidators: true },
         ).exec();
     }
+
+    static deleteOne(user: string, channel: string)
+        : Promise<IUserPermissions | null> {
+        return userPermissionsModel.findOneAndRemove(
+            { user, channel },
+        ).exec();
+    }
+
+    static getOne(user: string, channel: string)
+        : Promise<IUserPermissions | null> {
+        return userPermissionsModel.findOne(
+            { user, channel },
+        ).exec();
+    }
+
+    static getMany(
+        userPermissions: Partial<IUserPermissions>,
+        startIndex: number = 0,
+        endIndex: number = config.channel.defaultAmountOfResults,
+        sortOrder: '-' | '' = '',
+        sortBy: string = 'user',
+    )
+        : Promise<IUserPermissions[] | null> {
+        return userPermissionsModel
+            .find(userPermissions)
+            .sort(sortOrder + sortBy)
+            .skip(+startIndex)
+            .limit(endIndex - startIndex)
+            .exec();
+    }
+
+    static getAmount(userPermissions: Partial<IUserPermissions>) {
+        return userPermissionsModel.countDocuments(userPermissions).exec();
+    }
+
     /*
+
     static updateMany(channelFilter: Partial<IChannel>, channel: Partial<IChannel>)
         : Promise<any> {
 
@@ -35,64 +66,11 @@ export class UserPermissionsRepository {
             channelFilter,
             { $set: channel },
         ).exec();
-    } */
-
-    static deleteByUser(user: string)
-        : Promise<IUserPermissions | null> {
-        return userPermissionsModel.findOneAndRemove(
-            { user },
-        ).exec();
     }
 
-    static getByUser(user: string)
-        : Promise<IUserPermissions[] | null> {
-        return userPermissionsModel.find(
-            { user },
-        ).exec();
-    }
-    /*
-    static getSearched(
-        searchFilter: string = '',
-        startIndex: number = 0,
-        endIndex: number = config.channel.defaultAmountOfResults,
-        sortOrder: '-' | '' = '',
-        sortBy: string = 'name') {
-        return ChannelModel.find({
-            $or: [
-                { user: { $regex: searchFilter, $options: 'i' } },
-                { name: { $regex: searchFilter, $options: 'i' } },
-                { description: { $regex: searchFilter, $options: 'i' } },
-            ],
-        })
-            .sort(sortOrder + sortBy)
-            .skip(+startIndex)
-            .limit(endIndex - startIndex)
-            .exec();
-    }
-
-    static getSearchedAmount(searchFilter: string = '') {
-        return ChannelModel.countDocuments({
-            $or: [
-                { user: { $regex: searchFilter, $options: 'i' } },
-                { name: { $regex: searchFilter, $options: 'i' } },
-                { description: { $regex: searchFilter, $options: 'i' } },
-            ],
-        }).exec();
-    }
-
-    static getMany(
-        channelFilter: Partial<IChannel>,
-        startIndex: number = 0,
-        endIndex: number = config.channel.defaultAmountOfResults,
-        sortOrder: '-' | '' = '',
-        sortBy: string = 'name')
+    static createMany(channels: IChannel[])
         : Promise<IChannel[]> {
-        return ChannelModel
-            .find(channelFilter)
-            .sort(sortOrder + sortBy)
-            .skip(+startIndex)
-            .limit(+endIndex - +startIndex)
-            .exec();
+        return ChannelModel.insertMany(channels);
     }
 
     static getByIds(ids: string[]) {
