@@ -29,3 +29,9 @@ export class ChannelNotFoundError extends UserError {
         super(message || 'Channel not found', 404);
     }
 }
+
+export class UnauthorizedUserError extends UserError {
+    constructor(message?: string) {
+        super(message || 'User is not authorized to preform this action', 403);
+    }
+}
