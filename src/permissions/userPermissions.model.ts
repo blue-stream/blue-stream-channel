@@ -5,6 +5,11 @@ import { ChannelValidations } from '../channel/validator/channel.validations';
 
 const userPermissionsSchema: mongoose.Schema = new mongoose.Schema(
     {
+        channel: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Channel',
+            required: true,
+        },
         user: {
             type: String,
             required: true,
