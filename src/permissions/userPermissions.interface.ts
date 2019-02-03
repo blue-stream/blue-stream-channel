@@ -6,5 +6,6 @@ export enum PermissionTypes {
 }
 export interface IUserPermissions {
     user: string;
+    channel: string;
     permissions: PermissionTypes[];
 }
