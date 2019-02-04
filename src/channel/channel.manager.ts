@@ -20,7 +20,7 @@ export class ChannelManager {
         const currentChannel: IChannel | null = await ChannelManager.getById(id);
 
         if (currentChannel) {
-            if (currentChannel.user === currentChannel.user) {
+            if (requestingUser === currentChannel.user) {
                 isPermitted = true;
             } else {
                 const isAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, id);
@@ -41,14 +41,32 @@ export class ChannelManager {
         return ChannelRepository.updateMany(channelFilter, channel);
     }
 
-    static async deleteById(id: string) {
-        const removed: IChannel | null = await ChannelRepository.deleteById(id);
+    static async deleteById(id: string, requestingUser: string) {
+        let isPermitted: boolean = false;
+        const currentChannel: IChannel | null = await ChannelManager.getById(id);
 
-        if (removed) {
-            ChannelBroker.publish('channelService.channel.remove.succeeded', { id });
+        if (currentChannel) {
+            if (requestingUser === currentChannel.user) {
+                isPermitted = true;
+            } else {
+                const isAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, id);
+                if (isAdmin) isPermitted = true;
+            }
+
+            if (isPermitted) {
+                const removed: IChannel | null = await ChannelRepository.deleteById(id);
+
+                if (removed) {
+                    ChannelBroker.publish('channelService.channel.remove.succeeded', { id });
+                }
+
+                return removed;
+            }
+
+            throw new UnauthorizedUserError();
         }
 
-        return removed;
+        throw new ChannelNotFoundError();
     }
 
     static getSearched(
