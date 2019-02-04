@@ -1,7 +1,4 @@
 import { Request, Response } from 'express';
-import { ChannelManager } from './channel.manager';
-
-import { ChannelNotFoundError } from '../utils/errors/userErrors';
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { UserPermissionsManager } from './userPermissions.manager';
 
@@ -32,7 +29,7 @@ export class UserPermissionsController {
         const permission: PermissionTypes = req.query.permission;
         const requestingUser: string = req.user.id;
 
-        res.json(await ChannelManager.getMany(requestingUser, user, channel, permission, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
+        res.json(await UserPermissionsManager.getMany(requestingUser, user, channel, permission, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
     }
 
     static async getAmount(req: Request, res: Response) {
@@ -41,6 +38,6 @@ export class UserPermissionsController {
         const permission: PermissionTypes = req.query.permission;
         const requestingUser: string = req.user.id;
 
-        res.json(await ChannelManager.getAmount(requestingUser, user, channel, permission));
+        res.json(await UserPermissionsManager.getAmount(requestingUser, user, channel, permission));
     }
 }
