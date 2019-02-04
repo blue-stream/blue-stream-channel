@@ -2,7 +2,7 @@ import { IChannel } from './channel.interface';
 
 import { ChannelRepository } from './channel.repository';
 import { ChannelBroker } from './channel.broker';
-import { ChannelNotFoundError } from '../utils/errors/userErrors';
+import { ChannelNotFoundError, UnauthorizedUserError } from '../utils/errors/userErrors';
 import { IUserPermissions, PermissionTypes } from '../permissions/userPermissions.interface';
 import { UserPermissionsManager } from '../permissions/userPermissions.manager';
 export class ChannelManager {
@@ -30,6 +30,8 @@ export class ChannelManager {
             if (isPermitted) {
                 return ChannelRepository.updateById(id, channel);
             }
+
+            throw new UnauthorizedUserError();
         }
 
         throw new ChannelNotFoundError();
