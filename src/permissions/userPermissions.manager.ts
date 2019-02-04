@@ -62,6 +62,10 @@ export class UserPermissionsManager {
         throw new UnauthorizedUserError();
     }
 
+    static async getOneInner(user: string, channel: string) {
+        return UserPermissionsRepository.getOne(user, channel);
+    }
+
     // Should we add premissions check for GETTERS ?
     static async getMany(requestingUser: string, user: string, channel: string, permission: PermissionTypes, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
         const returnedResults = await Promise.all([

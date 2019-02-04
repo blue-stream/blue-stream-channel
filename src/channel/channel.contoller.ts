@@ -21,7 +21,7 @@ export class ChannelController {
                 undefined && delete updateParams[key as keyof IChannel];
         });
 
-        const updated = await ChannelManager.updateById(req.params.id, updateParams);
+        const updated = await ChannelManager.updateById(req.params.id, updateParams, req.user.id);
         if (!updated) {
             throw new ChannelNotFoundError();
         }
