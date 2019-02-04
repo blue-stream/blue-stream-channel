@@ -24,6 +24,12 @@ export class IdInvalidError extends UserError {
     }
 }
 
+export class PermissionInvalidError extends UserError {
+    constructor(message?: string) {
+        super(message || 'Permission is invalid', 400);
+    }
+}
+
 export class ChannelNotFoundError extends UserError {
     constructor(message?: string) {
         super(message || 'Channel not found', 404);

@@ -23,6 +23,14 @@ export class UserPermissionsController {
         res.json(await UserPermissionsManager.updateOne(requestingUser, user, channel, permissions));
     }
 
+    static async deleteOne(req: Request, res: Response) {
+        const user: string = req.query.user;
+        const channel: string = req.query.channel;
+        const requestingUser: string = req.user.id;
+
+        res.json(await UserPermissionsManager.deleteOne(requestingUser, user, channel));
+    }
+
     static async getMany(req: Request, res: Response) {
         const user: string = req.query.user;
         const channel: string = req.query.channel;
