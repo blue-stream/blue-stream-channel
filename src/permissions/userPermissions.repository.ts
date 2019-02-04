@@ -34,7 +34,9 @@ export class UserPermissionsRepository {
     }
 
     static getMany(
-        userPermissions: Partial<IUserPermissions>,
+        user?: string,
+        channel?: string,
+        permission?: PermissionTypes,
         startIndex: number = 0,
         endIndex: number = config.channel.defaultAmountOfResults,
         sortOrder: '-' | '' = '',
@@ -42,15 +44,23 @@ export class UserPermissionsRepository {
     )
         : Promise<IUserPermissions[] | null> {
         return userPermissionsModel
-            .find(userPermissions)
+            .find({
+                user,
+                channel,
+                permissions: permission,
+            })
             .sort(sortOrder + sortBy)
             .skip(+startIndex)
             .limit(endIndex - startIndex)
             .exec();
     }
 
-    static getAmount(userPermissions: Partial<IUserPermissions>) {
-        return userPermissionsModel.countDocuments(userPermissions).exec();
+    static getAmount(user?: string, channel?: string, permission?: PermissionTypes, ) {
+        return userPermissionsModel.countDocuments({
+            user,
+            channel,
+            permissions: permission,
+        }).exec();
     }
 
     /*

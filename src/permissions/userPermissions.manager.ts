@@ -46,6 +46,7 @@ export class UserPermissionsManager {
         throw new UnauthorizedUserError();
     }
 
+    // Should we add premissions check for GETTERS ?
     static async getOne(requestingUser: string, user: string, channel: string) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, channel),
@@ -61,17 +62,35 @@ export class UserPermissionsManager {
         throw new UnauthorizedUserError();
     }
 
-    static async getMany(requestingUser: string, userPermissions: Partial<IUserPermissions>, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
+    // Should we add premissions check for GETTERS ?
+    static async getMany(requestingUser: string, user: string, channel: string, permission: PermissionTypes, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
         const returnedResults = await Promise.all([
-            // UserPermissionsManager.isUserAdmin(requestingUser, userPermissions.channel),
-            UserPermissionsRepository.getMany(userPermissions, startIndex, endIndex, sortOrder, sortBy),
+            UserPermissionsManager.isUserAdmin(requestingUser, channel),
+            UserPermissionsRepository.getMany(user, channel, permission, startIndex, endIndex, sortOrder, sortBy),
         ]);
 
-        return UserPermissionsRepository.getMany(userPermissions, startIndex, endIndex, sortOrder, sortBy);
+        const [isRequestingUserAdmin, usersPermissions] = returnedResults;
+
+        if (isRequestingUserAdmin) {
+            return usersPermissions;
+        }
+
+        throw new UnauthorizedUserError();
     }
 
-    static getAmount(channelFilter: Partial<IUserPermissions>) {
-        return UserPermissionsRepository.getAmount(channelFilter);
+    static async getAmount(requestingUser: string, user: string, channel: string, permission: PermissionTypes) {
+        const returnedResults = await Promise.all([
+            UserPermissionsManager.isUserAdmin(requestingUser, channel),
+            UserPermissionsRepository.getAmount(user, channel, permission),
+        ]);
+
+        const [isRequestingUserAdmin, amount] = returnedResults;
+
+        if (isRequestingUserAdmin) {
+            return amount;
+        }
+
+        throw new UnauthorizedUserError();
     }
 
     static async isUserAdmin(user: string, channel: string): Promise<boolean> {
