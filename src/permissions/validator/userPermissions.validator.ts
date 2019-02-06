@@ -36,6 +36,13 @@ export class UserPermissionsValidator {
         next(ChannelValidator.validateUser(req.user.id));
     }
 
+    static canGetOne(req: Request, res: Response, next: NextFunction) {
+        next(
+            ChannelValidator.validateUser(req.user.id) ||
+            ChannelValidator.validateId(req.query.channel),
+        );
+    }
+
     static canGetAmount(req: Request, res: Response, next: NextFunction) {
         next(ChannelValidator.validateUser(req.user.id));
     }

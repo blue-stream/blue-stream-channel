@@ -1,8 +1,6 @@
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
-
 import { UserPermissionsRepository } from './userPermissions.repository';
 import { UnauthorizedUserError, ChannelNotFoundError } from '../utils/errors/userErrors';
-import { IChannel } from '../channel/channel.interface';
 import { ChannelManager } from '../channel/channel.manager';
 
 export class UserPermissionsManager {
@@ -46,8 +44,8 @@ export class UserPermissionsManager {
         throw new UnauthorizedUserError();
     }
 
-    // Should we add premissions check for GETTERS ?
-    static async getOne(requestingUser: string, user: string, channel: string) {
+    /*
+    private static async getUserPermissions(requestingUser: string, user: string, channel: string) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, channel),
             UserPermissionsRepository.getOne(user, channel),
@@ -61,12 +59,13 @@ export class UserPermissionsManager {
 
         throw new UnauthorizedUserError();
     }
+    */
 
-    static async getOneInner(user: string, channel: string) {
-        return UserPermissionsRepository.getOne(user, channel);
+    // Only to get user's own permissions
+    static getOne(requestingUser: string, channel: string) {
+        return UserPermissionsRepository.getOne(requestingUser, channel);
     }
 
-    // Should we add premissions check for GETTERS ?
     static async getMany(requestingUser: string, user: string, channel: string, permission: PermissionTypes, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, channel),

@@ -55,7 +55,7 @@ export class UserPermissionsRepository {
             .exec();
     }
 
-    static getAmount(user?: string, channel?: string, permission?: PermissionTypes, ) {
+    static getAmount(user?: string, channel?: string, permission?: PermissionTypes) {
         return userPermissionsModel.countDocuments({
             user,
             channel,
