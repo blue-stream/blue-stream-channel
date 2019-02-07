@@ -3,32 +3,30 @@ import { Types } from 'mongoose';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { sign } from 'jsonwebtoken';
 import { config } from '../../config';
+import { PermissionTypes } from '../userPermissions.interface';
 
 export const responseMock = createResponse();
 
 export class ValidRequestMocks {
-    readonly channel = {
-        id: new Types.ObjectId(),
+    readonly userPermissions = {
         user: 'a@a',
-        name: 'test channel',
-        description: 'test description',
+        channel: '5c3dd5072caef6001fd9b990',
+        permissions: [PermissionTypes.Admin],
     };
 
-    readonly channel2 = {
-        id: new Types.ObjectId(),
+    readonly userPermissions2 = {
         user: 'a@b',
-        name: 'test channel 2',
-        description: 'test description 2',
+        channel: '5c3dd5072caef6001fd9b991',
+        permissions: [PermissionTypes.Remove, PermissionTypes.Upload],
     };
 
-    readonly channel3 = {
-        id: new Types.ObjectId(),
+    readonly userPermissions3 = {
         user: 'a@c',
-        name: 'test channel 3',
-        description: 'test description 3',
+        channel: '5c3dd5072caef6001fd9b992',
+        permissions: [PermissionTypes.Edit],
     };
 
-    readonly channelFilter = this.channel;
+    readonly channelFilter = this.userPermissions;
 
     authorizationHeader = `Bearer ${sign({ id: 'a@a' }, config.authentication.secret)}`;
 
@@ -38,45 +36,49 @@ export class ValidRequestMocks {
         headers: {
             authorization: this.authorizationHeader,
         },
-        body: this.channel,
+        body: this.userPermissions,
         user: { id: 'a@a' },
     });
 
-    updateById = createRequest({
+    updateOne = createRequest({
         method: 'PUT',
-        url: '/api/channel/:id',
+        url: '/api/channel',
         headers: {
             authorization: this.authorizationHeader,
         },
-        params: {
-            id: new Types.ObjectId(),
+        query: {
+            channel: new Types.ObjectId(),
+            user: 'c@b',
         },
         body: {
-            description: this.channel.description,
-            name: this.channel.name,
+            permissions: this.userPermissions.permissions,
         },
+        user: { id: 'a@a' },
     });
 
-    deleteById = createRequest({
+    deleteOne = createRequest({
         method: 'DELETE',
-        url: '/api/channel/:id',
+        url: '/api/channel/',
         headers: {
             authorization: this.authorizationHeader,
         },
-        params: {
-            id: new Types.ObjectId(),
+        query: {
+            channel: new Types.ObjectId(),
+            user: 'c@b',
         },
+        user: { id: 'a@a' },
     });
 
-    getById = createRequest({
+    getOne = createRequest({
         method: 'GET',
-        url: '/api/channel/:id',
+        url: '/api/channel/one',
         headers: {
             authorization: this.authorizationHeader,
         },
-        params: {
-            id: new Types.ObjectId(),
+        query: {
+            channel: new Types.ObjectId(),
         },
+        user: { id: 'a@a' },
     });
 
     getMany = createRequest({
@@ -85,7 +87,8 @@ export class ValidRequestMocks {
         headers: {
             authorization: this.authorizationHeader,
         },
-        query: this.channel,
+        query: this.userPermissions,
+        user: { id: 'a@a' },
     });
 
     getAmount = createRequest({
@@ -94,6 +97,7 @@ export class ValidRequestMocks {
         headers: {
             authorization: this.authorizationHeader,
         },
-        query: this.channel,
+        query: this.userPermissions,
+        user: { id: 'a@a' },
     });
 }
