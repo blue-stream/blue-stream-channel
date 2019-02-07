@@ -14,7 +14,7 @@ export class UserPermissionsManager {
         const [isRequestingUserAdmin, channel] = returnedResults;
 
         if (channel) {
-            if (isRequestingUserAdmin) {
+            if (isRequestingUserAdmin || channel.user === requestingUser) {
                 return UserPermissionsRepository.create(userPermissions);
             }
 
