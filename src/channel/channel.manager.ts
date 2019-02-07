@@ -7,8 +7,20 @@ import { IUserPermissions, PermissionTypes } from '../permissions/userPermission
 import { UserPermissionsManager } from '../permissions/userPermissions.manager';
 export class ChannelManager {
 
-    static create(channel: IChannel) {
-        return ChannelRepository.create(channel);
+    static async create(channel: IChannel) {
+        const createdChannel: IChannel = await ChannelRepository.create(channel);
+
+        if (createdChannel && createdChannel.id) {
+            const userPermissions: IUserPermissions = {
+                channel: createdChannel.id,
+                permissions: [PermissionTypes.Admin],
+                user: channel.user,
+            };
+
+            await UserPermissionsManager.create(userPermissions, channel.user);
+        }
+
+        return createdChannel;
     }
 
     static createMany(channels: IChannel[]) {
