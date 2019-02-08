@@ -66,10 +66,18 @@ export class UserPermissionsManager {
         return UserPermissionsRepository.getOne(requestingUser, channel);
     }
 
-    static async getMany(requestingUser: string, user: string, channel: string, permission: PermissionTypes, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
+    static getUserPermittedChannels(requestingUser: string, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
+        return UserPermissionsRepository.getMany({ user: requestingUser }, startIndex, endIndex, sortOrder, sortBy);
+    }
+
+    static getUserPermittedChannelsAmount(requestingUser: string) {
+        return UserPermissionsRepository.getAmount({ user: requestingUser });
+    }
+
+    static async getChannelPermittedUsers(requestingUser: string, channel: string, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, channel),
-            UserPermissionsRepository.getMany(user, channel, permission, startIndex, endIndex, sortOrder, sortBy),
+            UserPermissionsRepository.getMany({ channel }, startIndex, endIndex, sortOrder, sortBy),
         ]);
 
         const [isRequestingUserAdmin, usersPermissions] = returnedResults;
@@ -81,16 +89,16 @@ export class UserPermissionsManager {
         throw new UnauthorizedUserError();
     }
 
-    static async getAmount(requestingUser: string, user: string, channel: string, permission: PermissionTypes) {
+    static async getChannelPermittedUsersAmount(requestingUser: string, channel: string) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, channel),
-            UserPermissionsRepository.getAmount(user, channel, permission),
+            UserPermissionsRepository.getAmount({ channel }),
         ]);
 
-        const [isRequestingUserAdmin, amount] = returnedResults;
+        const [isRequestingUserAdmin, usersPermissionsAmount] = returnedResults;
 
         if (isRequestingUserAdmin) {
-            return amount;
+            return usersPermissionsAmount;
         }
 
         throw new UnauthorizedUserError();

@@ -32,10 +32,6 @@ export class UserPermissionsValidator {
         );
     }
 
-    static canGetMany(req: Request, res: Response, next: NextFunction) {
-        next(ChannelValidator.validateUser(req.user.id));
-    }
-
     static canGetOne(req: Request, res: Response, next: NextFunction) {
         next(
             ChannelValidator.validateUser(req.user.id) ||
@@ -43,8 +39,26 @@ export class UserPermissionsValidator {
         );
     }
 
-    static canGetAmount(req: Request, res: Response, next: NextFunction) {
+    static canGetUserPermittedChannels(req: Request, res: Response, next: NextFunction) {
         next(ChannelValidator.validateUser(req.user.id));
+    }
+
+    static canGetChannelPermittedUsers(req: Request, res: Response, next: NextFunction) {
+        next(
+            ChannelValidator.validateUser(req.user.id) ||
+            ChannelValidator.validateId(req.params.channelId),
+        );
+    }
+
+    static canGetUserPermittedChannelsAmount(req: Request, res: Response, next: NextFunction) {
+        next(ChannelValidator.validateUser(req.user.id));
+    }
+
+    static canGetChannelPermittedUsersAmount(req: Request, res: Response, next: NextFunction) {
+        next(
+            ChannelValidator.validateUser(req.user.id) ||
+            ChannelValidator.validateId(req.params.channelId),
+        );
     }
 
     static validatePermissions(permissions: PermissionTypes[] | PermissionTypes) {

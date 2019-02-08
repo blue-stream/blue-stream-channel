@@ -38,21 +38,29 @@ export class UserPermissionsController {
         res.json(await UserPermissionsManager.getOne(requestingUser, channel));
     }
 
-    static async getMany(req: Request, res: Response) {
-        const user: string = req.query.user;
-        const channel: string = req.query.channel;
-        const permission: PermissionTypes = req.query.permission;
+    static async getChannelPermittedUsers(req: Request, res: Response) {
+        const channel: string = req.params.channelId;
         const requestingUser: string = req.user.id;
 
-        res.json(await UserPermissionsManager.getMany(requestingUser, user, channel, permission, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
+        res.json(await UserPermissionsManager.getChannelPermittedUsers(requestingUser, channel, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
     }
 
-    static async getAmount(req: Request, res: Response) {
-        const user: string = req.query.user;
-        const channel: string = req.query.channel;
-        const permission: PermissionTypes = req.query.permission;
+    static async getUserPermittedChannels(req: Request, res: Response) {
         const requestingUser: string = req.user.id;
 
-        res.json(await UserPermissionsManager.getAmount(requestingUser, user, channel, permission));
+        res.json(await UserPermissionsManager.getUserPermittedChannels(requestingUser, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
+    }
+
+    static async getChannelPermittedUsersAmount(req: Request, res: Response) {
+        const channel: string = req.params.channelId;
+        const requestingUser: string = req.user.id;
+
+        res.json(await UserPermissionsManager.getChannelPermittedUsersAmount(requestingUser, channel));
+    }
+
+    static async getUserPermittedChannelsAmount(req: Request, res: Response) {
+        const requestingUser: string = req.user.id;
+
+        res.json(await UserPermissionsManager.getUserPermittedChannelsAmount(requestingUser));
     }
 }
