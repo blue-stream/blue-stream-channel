@@ -34,9 +34,7 @@ export class UserPermissionsRepository {
     }
 
     static getMany(
-        user?: string,
-        channel?: string,
-        permission?: PermissionTypes,
+        filter: Partial<IUserPermissions>,
         startIndex: number = 0,
         endIndex: number = config.channel.defaultAmountOfResults,
         sortOrder: '-' | '' = '',
@@ -44,23 +42,15 @@ export class UserPermissionsRepository {
     )
         : Promise<IUserPermissions[] | null> {
         return userPermissionsModel
-            .find({
-                user,
-                channel,
-                permissions: permission,
-            })
+            .find(filter)
             .sort(sortOrder + sortBy)
             .skip(+startIndex)
             .limit(endIndex - startIndex)
             .exec();
     }
 
-    static getAmount(user?: string, channel?: string, permission?: PermissionTypes) {
-        return userPermissionsModel.countDocuments({
-            user,
-            channel,
-            permissions: permission,
-        }).exec();
+    static getAmount(filter: Partial<IUserPermissions>) {
+        return userPermissionsModel.countDocuments(filter).exec();
     }
 
     /*
@@ -83,17 +73,5 @@ export class UserPermissionsRepository {
         return ChannelModel.insertMany(channels);
     }
 
-    static getByIds(ids: string[]) {
-        return ChannelModel.find({
-            _id: { $in: ids },
-        }).exec();
-    }
-
-    static getAmount(channelFilter: Partial<IChannel>)
-        : Promise<number> {
-        return ChannelModel
-            .countDocuments(channelFilter)
-            .exec();
-    }
     */
 }
