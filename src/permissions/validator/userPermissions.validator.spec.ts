@@ -309,23 +309,44 @@ describe('Channel Validator Middleware', function () {
         });
     });
 
-    describe('canGetMany Validator', function () {
+    describe('canGetUserPermittedChannels Validator', function () {
         context('When valid arguments are passed', function () {
             it('Should not throw an error', function () {
-                UserPermissionsValidator.canGetMany(new ValidRequestMocks().getMany, responseMock, (error: Error) => {
+                UserPermissionsValidator.canGetUserPermittedChannels(new ValidRequestMocks().getUserPermittedChannels, responseMock, (error: Error) => {
                     expect(error).to.not.exist;
                 });
             });
         });
     });
 
-    describe('canGetAmount Validator', function () {
+    describe('canGetChannelPermittedUsers Validator', function () {
         context('When valid arguments are passed', function () {
             it('Should not throw an error', function () {
-                UserPermissionsValidator.canGetAmount(new ValidRequestMocks().getAmount, responseMock, (error: Error) => {
+                UserPermissionsValidator.canGetChannelPermittedUsers(new ValidRequestMocks().getChannelPermittedUsers, responseMock, (error: Error) => {
                     expect(error).to.not.exist;
                 });
             });
         });
     });
+
+    describe('canGetUserPermittedChannelsAmount Validator', function () {
+        context('When valid arguments are passed', function () {
+            it('Should not throw an error', function () {
+                UserPermissionsValidator.canGetUserPermittedChannelsAmount(new ValidRequestMocks().getUserPermittedChannelsAmount, responseMock, (error: Error) => {
+                    expect(error).to.not.exist;
+                });
+            });
+        });
+    });
+
+    describe('canGetChannelPermittedUsersAmount Validator', function () {
+        context('When valid arguments are passed', function () {
+            it('Should not throw an error', function () {
+                UserPermissionsValidator.canGetChannelPermittedUsersAmount(new ValidRequestMocks().getChannelPermittedUsersAmount, responseMock, (error: Error) => {
+                    expect(error).to.not.exist;
+                });
+            });
+        });
+    });
+
 });

@@ -81,23 +81,45 @@ export class ValidRequestMocks {
         user: { id: 'a@a' },
     });
 
-    getMany = createRequest({
+    getUserPermittedChannels = createRequest({
         method: 'GET',
-        url: '/api/channel/many',
+        url: '/api/userPermissions/channels',
         headers: {
             authorization: this.authorizationHeader,
         },
-        query: this.userPermissions,
         user: { id: 'a@a' },
     });
 
-    getAmount = createRequest({
+    getChannelPermittedUsers = createRequest({
         method: 'GET',
-        url: '/api/channel/amount',
+        url: '/api/userPermissions/:channelId/users',
         headers: {
             authorization: this.authorizationHeader,
         },
-        query: this.userPermissions,
         user: { id: 'a@a' },
+        params: {
+            channelId: new Types.ObjectId(),
+        },
+    });
+
+    getUserPermittedChannelsAmount = createRequest({
+        method: 'GET',
+        url: '/api/userPermissions/channels',
+        headers: {
+            authorization: this.authorizationHeader,
+        },
+        user: { id: 'a@a' },
+    });
+
+    getChannelPermittedUsersAmount = createRequest({
+        method: 'GET',
+        url: '/api/userPermissions/:channelId/users',
+        headers: {
+            authorization: this.authorizationHeader,
+        },
+        user: { id: 'a@a' },
+        params: {
+            channelId: new Types.ObjectId(),
+        },
     });
 }
