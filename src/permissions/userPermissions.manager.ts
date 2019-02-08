@@ -99,7 +99,7 @@ export class UserPermissionsManager {
     static async isUserAdmin(user: string, channel: string): Promise<boolean> {
         const requestingUserPremissions: IUserPermissions | null = await UserPermissionsRepository.getOne(user, channel);
 
-        if (requestingUserPremissions && requestingUserPremissions.permissions.indexOf(PermissionTypes.Admin) === -1) {
+        if (requestingUserPremissions && requestingUserPremissions.permissions.indexOf(PermissionTypes.Admin) !== -1) {
             return true;
         }
 
