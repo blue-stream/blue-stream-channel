@@ -1,7 +1,6 @@
 
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { userPermissionsModel } from './userPermissions.model';
-import { ServerError } from '../utils/errors/applicationError';
 import { config } from '../config';
 
 export class UserPermissionsRepository {
@@ -52,26 +51,4 @@ export class UserPermissionsRepository {
     static getAmount(filter: Partial<IUserPermissions>) {
         return userPermissionsModel.countDocuments(filter).exec();
     }
-
-    /*
-
-    static updateMany(channelFilter: Partial<IChannel>, channel: Partial<IChannel>)
-        : Promise<any> {
-
-        if (Object.keys(channel).length === 0) {
-            throw new ServerError('Update data is required.');
-        }
-
-        return ChannelModel.updateMany(
-            channelFilter,
-            { $set: channel },
-        ).exec();
-    }
-
-    static createMany(channels: IChannel[])
-        : Promise<IChannel[]> {
-        return ChannelModel.insertMany(channels);
-    }
-
-    */
 }

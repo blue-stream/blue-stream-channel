@@ -2,7 +2,6 @@
 import { expect } from 'chai';
 import * as mongoose from 'mongoose';
 import { config } from '../config';
-import { ServerError } from '../utils/errors/applicationError';
 import { IChannel } from '../channel/channel.interface';
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { UserPermissionsManager } from './userPermissions.manager';
@@ -39,22 +38,7 @@ const userPermissions3: IUserPermissions = {
     permissions: [PermissionTypes.Edit],
 };
 
-const channelArr: IUserPermissions[] = [userPermissions1, userPermissions2, userPermissions3];
-const invalidUserPermissions: any = {
-    id: '',
-    user: 'a',
-    name: '1',
-    description: '2',
-};
-const userPermissionsFilter: Partial<IUserPermissions> = { channel: validId };
 const userPermissionsDataToUpdate: Partial<IUserPermissions> = { permissions: [PermissionTypes.Remove] };
-const unexistingUserPermissions: Partial<IUserPermissions> = {
-    channel: (new mongoose.Types.ObjectId()).toHexString(),
-    user: 'v@c',
-    permissions: [PermissionTypes.Admin],
-
-};
-const unknownProperty: Object = { unknownProperty: true };
 
 describe('User Permissions Manager', function () {
     before(async function () {

@@ -11,7 +11,6 @@ import { sign } from 'jsonwebtoken';
 
 describe('Channel Router Module', function () {
     let server: Server;
-    const validProppertyString: string = '12345';
     const channel: IChannel = {
         id: (new mongoose.Types.ObjectId()).toHexString(),
         user: 'a@a',
@@ -20,7 +19,6 @@ describe('Channel Router Module', function () {
     };
     const authorizationHeader = `Bearer ${sign({ id: 'a@a' }, config.authentication.secret)}`;
     const invalidId: string = '1';
-    const invalidProppertyString: string = '123456789123456789';
     const invalidChannel: IChannel = {
         id: '',
         user: 'a',
@@ -42,18 +40,8 @@ describe('Channel Router Module', function () {
         description: 'fake description',
     };
 
-    const unexistingChannel: Partial<IChannel> = {
-        id: (new mongoose.Types.ObjectId()).toHexString(),
-        user: 'a@c',
-        name: 'fake name 4',
-        description: 'fake description',
-    };
-
     const channels: IChannel[] =
         [channel, channel2, channel3, channel3];
-
-    const invalidChannels: IChannel[] =
-        [channel, invalidChannel, channel3];
 
     before(async function () {
 

@@ -36,6 +36,6 @@ const userPermissionsSchema: mongoose.Schema = new mongoose.Schema(
         },
     });
 
-userPermissionsSchema.index({ user: 1 });
+userPermissionsSchema.index({ channel: 1, user: -1 });
 
 export const userPermissionsModel = mongoose.model<IUserPermissions & mongoose.Document>('UserPermissions', userPermissionsSchema);

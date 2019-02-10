@@ -44,23 +44,6 @@ export class UserPermissionsManager {
         throw new UnauthorizedUserError();
     }
 
-    /*
-    private static async getUserPermissions(requestingUser: string, user: string, channel: string) {
-        const returnedResults = await Promise.all([
-            UserPermissionsManager.isUserAdmin(requestingUser, channel),
-            UserPermissionsRepository.getOne(user, channel),
-        ]);
-
-        const [isRequestingUserAdmin, userPermissions] = returnedResults;
-
-        if (isRequestingUserAdmin) {
-            return userPermissions;
-        }
-
-        throw new UnauthorizedUserError();
-    }
-    */
-
     // Only to get user's own permissions
     static getOne(requestingUser: string, channel: string) {
         return UserPermissionsRepository.getOne(requestingUser, channel);
