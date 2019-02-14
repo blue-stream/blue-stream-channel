@@ -25,7 +25,7 @@ const userPermissionsSchema: mongoose.Schema = new mongoose.Schema(
     },
     {
         versionKey: false,
-        autoIndex: false,
+        autoIndex: true,
         timestamps: true,
         id: true,
         toJSON: {
