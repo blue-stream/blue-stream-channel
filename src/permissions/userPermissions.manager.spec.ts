@@ -6,7 +6,7 @@ import { IChannel } from '../channel/channel.interface';
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { UserPermissionsManager } from './userPermissions.manager';
 import { ChannelManager } from '../channel/channel.manager';
-import { UnauthorizedUserError } from '../utils/errors/userErrors';
+import { UnauthorizedUserError, UserPermissionsAlredyExistsError, OwnerPermissionsCanNotBeRemovedError } from '../utils/errors/userErrors';
 
 const validId: string = new mongoose.Types.ObjectId().toHexString();
 const invalidId: string = 'invalid id';
@@ -77,6 +77,27 @@ describe('User Permissions Manager', function () {
                 expect(createdUserPermissions).to.have.property('user', userPermissions3.user);
                 expect(createdUserPermissions.channel.toString()).to.equal(createdChannel.id);
                 expect(createdUserPermissions.permissions).to.contain(userPermissions3.permissions[0]);
+            });
+
+            it('Should not create UserPermissions when user already has permissions to the channel', async function () {
+                const createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions1, channel: createdChannel.id! }, channel.user);
+                expect(createdUserPermissions).to.exist;
+                expect(createdUserPermissions).to.have.property('user', userPermissions1.user);
+                expect(createdUserPermissions.channel.toString()).to.equal(createdChannel.id);
+                expect(createdUserPermissions.permissions).to.contain(userPermissions1.permissions[0]);
+
+                let hasThrown = false;
+
+                try {
+                    await UserPermissionsManager.create({ ...userPermissions1, channel: createdChannel.id! }, channel.user);
+                } catch (err) {
+                    hasThrown = true;
+                    expect(err).to.exist;
+                    expect(err).to.have.property('name', UserPermissionsAlredyExistsError.name);
+                    expect(err).to.have.property('message', new UserPermissionsAlredyExistsError().message);
+                } finally {
+                    expect(hasThrown).to.be.true;
+                }
             });
         });
 
@@ -188,6 +209,20 @@ describe('User Permissions Manager', function () {
             it('Should return null when user does not have permissions to the channel', async function () {
                 const deleted = await UserPermissionsManager.deleteOne(createdChannel.user, randomUser, createdUserPermissions.channel);
                 expect(deleted).to.be.null;
+            });
+            it('Should throw UnauthorizedUserError when user is the owner', async function () {
+                let hasThrown = false;
+
+                try {
+                    await UserPermissionsManager.deleteOne(admin.user, createdChannel.user, createdUserPermissions.channel);
+                } catch (err) {
+                    hasThrown = true;
+                    expect(err).to.exist;
+                    expect(err).to.have.property('name', OwnerPermissionsCanNotBeRemovedError.name);
+                    expect(err).to.have.property('message', new OwnerPermissionsCanNotBeRemovedError().message);
+                } finally {
+                    expect(hasThrown).to.be.true;
+                }
             });
         });
 

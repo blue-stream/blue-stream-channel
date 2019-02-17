@@ -1,6 +1,6 @@
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { UserPermissionsRepository } from './userPermissions.repository';
-import { UnauthorizedUserError, ChannelNotFoundError } from '../utils/errors/userErrors';
+import { UnauthorizedUserError, ChannelNotFoundError, UserPermissionsAlredyExistsError, OwnerPermissionsCanNotBeRemovedError } from '../utils/errors/userErrors';
 import { ChannelManager } from '../channel/channel.manager';
 
 export class UserPermissionsManager {
@@ -9,16 +9,21 @@ export class UserPermissionsManager {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, userPermissions.channel),
             ChannelManager.getById(userPermissions.channel),
+            UserPermissionsManager.getOne(userPermissions.user, userPermissions.channel),
         ]);
 
-        const [isRequestingUserAdmin, channel] = returnedResults;
+        const [isRequestingUserAdmin, channel, user] = returnedResults;
 
         if (channel) {
-            if (isRequestingUserAdmin || channel.user === requestingUser) {
-                return UserPermissionsRepository.create(userPermissions);
+            if (!user) {
+                if (isRequestingUserAdmin || channel.user === requestingUser) {
+                    return UserPermissionsRepository.create(userPermissions);
+                }
+
+                throw new UnauthorizedUserError();
             }
 
-            throw new UnauthorizedUserError();
+            throw new UserPermissionsAlredyExistsError();
         }
 
         throw new ChannelNotFoundError();
@@ -34,11 +39,19 @@ export class UserPermissionsManager {
         throw new UnauthorizedUserError();
     }
 
-    static async deleteOne(requestingUser: string, user: string, channel: string) {
-        const isRequestingUserAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, channel);
+    static async deleteOne(requestingUser: string, user: string, channelId: string) {
+        const returnedResults = await Promise.all([
+            UserPermissionsManager.isUserAdmin(requestingUser, channelId),
+            ChannelManager.getById(channelId),
+        ]);
+
+        const [isRequestingUserAdmin, channel] = returnedResults;
 
         if (isRequestingUserAdmin) {
-            return UserPermissionsRepository.deleteOne(user, channel);
+            if (channel && channel.user !== user) {
+                return UserPermissionsRepository.deleteOne(user, channelId);
+            }
+            throw new OwnerPermissionsCanNotBeRemovedError();
         }
 
         throw new UnauthorizedUserError();

@@ -41,3 +41,16 @@ export class UnauthorizedUserError extends UserError {
         super(message || 'User is not authorized to preform this action', 403);
     }
 }
+
+export class UserPermissionsAlredyExistsError extends UserError {
+    constructor(message?: string) {
+        super(message || 'User already has permissions', 400);
+    }
+}
+
+
+export class OwnerPermissionsCanNotBeRemovedError extends UserError {
+    constructor(message?: string) {
+        super(message || 'Owner\'s permissions can\'t be removed', 400);
+    }
+}
