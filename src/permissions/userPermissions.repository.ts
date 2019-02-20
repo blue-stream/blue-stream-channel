@@ -48,6 +48,47 @@ export class UserPermissionsRepository {
             .exec();
     }
 
+    static getUserPermittedChannels(
+        user: string,
+        permission: PermissionTypes,
+        searchFilter: string,
+        startIndex: number = 0,
+        endIndex: number = config.channel.defaultAmountOfResults,
+        sortOrder: '-' | '' = '',
+        sortBy: string = 'user',
+    )
+        : Promise<IUserPermissions[] | null> {
+        return userPermissionsModel
+            .aggregate()
+            .match({
+                user,
+                permissions: permission,
+            })
+            .lookup({
+                from: 'channels',
+                localField: 'channel',
+                foreignField: '_id',
+                as: 'lookupChannels',
+            })
+            .unwind('$lookupChannels')
+            .project({
+                _id: false,
+                permissions: true,
+                channel: '$lookupChannels',
+            })
+            .match({
+                $or: [
+                    { 'channel.user': { $regex: searchFilter, $options: 'i' } },
+                    { 'channel.name': { $regex: searchFilter, $options: 'i' } },
+                    { 'channel.description': { $regex: searchFilter, $options: 'i' } },
+                ],
+            })
+            .sort(sortOrder + sortBy)
+            .skip(+startIndex)
+            .limit(endIndex - startIndex)
+            .exec();
+    }
+
     static getAmount(filter: Partial<IUserPermissions>) {
         return userPermissionsModel.countDocuments(filter).exec();
     }

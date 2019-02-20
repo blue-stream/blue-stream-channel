@@ -344,7 +344,7 @@ describe('User Permissions Manager', function () {
             });
 
             it('Should return all channels that the user have permissions to', async function () {
-                const documents = await UserPermissionsManager.getUserPermittedChannels(channel.user);
+                const documents = await UserPermissionsManager.getUserPermittedChannels(channel.user, PermissionTypes.Admin, '');
                 expect(documents).to.exist;
                 expect(documents).to.be.an('array');
                 expect(documents).to.have.lengthOf(3);
