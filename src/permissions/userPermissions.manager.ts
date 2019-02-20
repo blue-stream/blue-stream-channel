@@ -62,8 +62,8 @@ export class UserPermissionsManager {
         return UserPermissionsRepository.getOne(requestingUser, channel);
     }
 
-    static getUserPermittedChannels(requestingUser: string, permission: PermissionTypes, searchFilter: string, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
-        return UserPermissionsRepository.getUserPermittedChannels(requestingUser, permission, searchFilter, startIndex, endIndex, sortOrder, sortBy);
+    static getUserPermittedChannels(requestingUser: string, permissions: PermissionTypes[] | PermissionTypes, searchFilter: string, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
+        return UserPermissionsRepository.getUserPermittedChannels(requestingUser, permissions, searchFilter, startIndex, endIndex, sortOrder, sortBy);
     }
 
     static getUserPermittedChannelsAmount(requestingUser: string) {

@@ -48,7 +48,7 @@ export class UserPermissionsController {
     static async getUserPermittedChannels(req: Request, res: Response) {
         const requestingUser: string = req.user.id;
 
-        res.json(await UserPermissionsManager.getUserPermittedChannels(requestingUser, req.query.permission, req.query.searchFilter, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
+        res.json(await UserPermissionsManager.getUserPermittedChannels(requestingUser, req.query.permissions, req.query.searchFilter, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
     }
 
     static async getChannelPermittedUsersAmount(req: Request, res: Response) {

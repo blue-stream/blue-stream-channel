@@ -2,6 +2,7 @@
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { userPermissionsModel } from './userPermissions.model';
 import { config } from '../config';
+import { isArray } from 'util';
 
 export class UserPermissionsRepository {
     static create(userPermissions: IUserPermissions)
@@ -50,7 +51,7 @@ export class UserPermissionsRepository {
 
     static getUserPermittedChannels(
         user: string,
-        permission: PermissionTypes,
+        permissions: PermissionTypes[] | PermissionTypes,
         searchFilter: string,
         startIndex: number = 0,
         endIndex: number = config.channel.defaultAmountOfResults,
@@ -62,7 +63,9 @@ export class UserPermissionsRepository {
             .aggregate()
             .match({
                 user,
-                permissions: permission,
+                permissions: {
+                    $in: isArray(permissions) ? permissions : [permissions],
+                },
             })
             .lookup({
                 from: 'channels',
