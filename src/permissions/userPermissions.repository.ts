@@ -77,7 +77,14 @@ export class UserPermissionsRepository {
             .project({
                 _id: false,
                 permissions: true,
-                channel: '$lookupChannels',
+                channel: {
+                    $mergeObjects: [
+                        '$$ROOT.lookupChannels',
+                        {
+                            id: '$lookupChannels._id',
+                        },
+                    ],
+                },
             })
             .match({
                 $or: [
