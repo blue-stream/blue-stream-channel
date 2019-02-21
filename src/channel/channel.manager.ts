@@ -13,7 +13,7 @@ export class ChannelManager {
         if (createdChannel && createdChannel.id) {
             const userPermissions: IUserPermissions = {
                 channel: createdChannel.id,
-                permissions: [PermissionTypes.Admin],
+                permissions: [PermissionTypes.Admin, PermissionTypes.Edit, PermissionTypes.Remove, PermissionTypes.Upload],
                 user: channel.user,
             };
 
