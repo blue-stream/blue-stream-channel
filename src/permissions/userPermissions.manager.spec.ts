@@ -20,6 +20,12 @@ const channel: IChannel = {
     description: 'test desc',
 };
 
+const channel2: IChannel = {
+    name: 'test',
+    user: randomUser,
+    description: 'test desc',
+};
+
 const userPermissions1: IUserPermissions = {
     user: randomUser,
     channel: (new mongoose.Types.ObjectId()).toHexString(),
@@ -341,6 +347,7 @@ describe('User Permissions Manager', function () {
                 await ChannelManager.create(channel);
                 await ChannelManager.create(channel);
                 await ChannelManager.create(channel);
+                await ChannelManager.create(channel2);
             });
 
             it('Should return all channels that the user have permissions to', async function () {
@@ -366,7 +373,7 @@ describe('User Permissions Manager', function () {
         context('When data is valid', function () {
             beforeEach(async function () {
                 createdChannel = await ChannelManager.create(channel);
-                randomChannel = await ChannelManager.create(channel);
+                randomChannel = await ChannelManager.create(channel2);
 
                 expect(createdChannel).have.property('id');
                 expect(randomChannel).have.property('id');
@@ -385,7 +392,7 @@ describe('User Permissions Manager', function () {
                 expect(createdUserPermissions4).have.property('user', 'd@d');
             });
 
-            it('Should return all amount of users that have permissions to the channel', async function () {
+            it('Should return amount of users that have permissions to the channel', async function () {
                 const documents = await UserPermissionsManager.getChannelPermittedUsersAmount(admin.user, createdChannel.id!);
                 expect(documents).to.exist;
                 expect(documents).to.be.an('number');
