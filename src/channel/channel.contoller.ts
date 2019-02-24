@@ -21,7 +21,7 @@ export class ChannelController {
                 undefined && delete updateParams[key as keyof IChannel];
         });
 
-        const updated = await ChannelManager.updateById(req.params.id, updateParams);
+        const updated = await ChannelManager.updateById(req.params.id, updateParams, req.user.id);
         if (!updated) {
             throw new ChannelNotFoundError();
         }
@@ -30,7 +30,7 @@ export class ChannelController {
     }
 
     static async deleteById(req: Request, res: Response) {
-        const deleted = await ChannelManager.deleteById(req.params.id);
+        const deleted = await ChannelManager.deleteById(req.params.id, req.user.id);
         if (!deleted) {
             throw new ChannelNotFoundError();
         }

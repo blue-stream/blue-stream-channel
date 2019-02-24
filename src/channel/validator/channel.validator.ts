@@ -47,7 +47,7 @@ export class ChannelValidator {
         next();
     }
 
-    private static validateId(id: string) {
+    static validateId(id: string) {
         if (!ChannelValidations.isIdValid(id)) {
             return new IdInvalidError();
         }
@@ -55,7 +55,7 @@ export class ChannelValidator {
         return undefined;
     }
 
-    private static validateUser(user: string) {
+    static validateUser(user: string) {
         if (!ChannelValidations.isUserValid(user)) {
             return new UserInvalidError();
         }
