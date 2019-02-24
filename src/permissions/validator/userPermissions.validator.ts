@@ -71,7 +71,7 @@ export class UserPermissionsValidator {
         }
 
         for (let permissionIndex = 0; permissionIndex < permissionsToValidate.length; permissionIndex++) {
-            if (!UserPermissionsValidations.isPermmision(permissionsToValidate[permissionIndex])) {
+            if (!UserPermissionsValidations.isPermission(permissionsToValidate[permissionIndex])) {
                 return new PermissionInvalidError();
             }
         }

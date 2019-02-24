@@ -42,7 +42,7 @@ export class UnauthorizedUserError extends UserError {
     }
 }
 
-export class UserPermissionsAlredyExistsError extends UserError {
+export class UserPermissionsAlreadyExistsError extends UserError {
     constructor(message?: string) {
         super(message || 'User already has permissions', 400);
     }

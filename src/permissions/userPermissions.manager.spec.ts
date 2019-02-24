@@ -6,7 +6,7 @@ import { IChannel } from '../channel/channel.interface';
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { UserPermissionsManager } from './userPermissions.manager';
 import { ChannelManager } from '../channel/channel.manager';
-import { UnauthorizedUserError, UserPermissionsAlredyExistsError, OwnerPermissionsCanNotBeRemovedError } from '../utils/errors/userErrors';
+import { UnauthorizedUserError, UserPermissionsAlreadyExistsError, OwnerPermissionsCanNotBeRemovedError } from '../utils/errors/userErrors';
 
 const validId: string = new mongoose.Types.ObjectId().toHexString();
 const invalidId: string = 'invalid id';
@@ -99,8 +99,8 @@ describe('User Permissions Manager', function () {
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
-                    expect(err).to.have.property('name', UserPermissionsAlredyExistsError.name);
-                    expect(err).to.have.property('message', new UserPermissionsAlredyExistsError().message);
+                    expect(err).to.have.property('name', UserPermissionsAlreadyExistsError.name);
+                    expect(err).to.have.property('message', new UserPermissionsAlreadyExistsError().message);
                 } finally {
                     expect(hasThrown).to.be.true;
                 }
