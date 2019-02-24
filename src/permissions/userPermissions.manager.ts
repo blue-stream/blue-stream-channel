@@ -1,6 +1,6 @@
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { UserPermissionsRepository } from './userPermissions.repository';
-import { UnauthorizedUserError, ChannelNotFoundError, UserPermissionsAlredyExistsError, OwnerPermissionsCanNotBeRemovedError } from '../utils/errors/userErrors';
+import { UnauthorizedUserError, ChannelNotFoundError, UserPermissionsAlreadyExistsError, OwnerPermissionsCanNotBeRemovedError } from '../utils/errors/userErrors';
 import { ChannelManager } from '../channel/channel.manager';
 
 export class UserPermissionsManager {
@@ -14,19 +14,11 @@ export class UserPermissionsManager {
 
         const [isRequestingUserAdmin, channel, user] = returnedResults;
 
-        if (channel) {
-            if (!user) {
-                if (isRequestingUserAdmin || channel.user === requestingUser) {
-                    return UserPermissionsRepository.create(userPermissions);
-                }
+        if (!channel) throw new ChannelNotFoundError();
+        if (user) throw new UserPermissionsAlreadyExistsError();
+        if (!isRequestingUserAdmin && channel.user !== requestingUser) throw new UnauthorizedUserError();
 
-                throw new UnauthorizedUserError();
-            }
-
-            throw new UserPermissionsAlredyExistsError();
-        }
-
-        throw new ChannelNotFoundError();
+        return UserPermissionsRepository.create(userPermissions);
     }
 
     static async updateOne(requestingUser: string, user: string, channel: string, permissions: PermissionTypes[]) {
