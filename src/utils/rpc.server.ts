@@ -16,7 +16,7 @@ export const RPCServer = new jayson.Server({
         return channelsMap;
     },
 
-    async createUserChannel(user: { id: string, name: string }) {
+    createUserChannel(user: { id: string, name: string }) {
         const userChannel: IChannel = {
             user: user.id.toLowerCase(),
             name: user.name,
@@ -24,6 +24,6 @@ export const RPCServer = new jayson.Server({
             isProfile: true,
         };
 
-        return await ChannelManager.create(userChannel);
+        return ChannelManager.create(userChannel);
     },
 });
