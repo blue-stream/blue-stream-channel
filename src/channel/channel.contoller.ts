@@ -6,7 +6,11 @@ import { IChannel } from './channel.interface';
 
 export class ChannelController {
     static async create(req: Request, res: Response) {
-        const channel = { ...req.body, user: req.user.id };
+        const channel = {
+            ...req.body,
+            user: req.user.id,
+            isProfile: false,
+        };
         res.json(await ChannelManager.create(channel));
     }
 
