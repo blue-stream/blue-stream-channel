@@ -2,7 +2,7 @@ import { IChannel } from './channel.interface';
 
 import { ChannelRepository } from './channel.repository';
 import { ChannelBroker } from './channel.broker';
-import { ChannelNotFoundError, UnauthorizedUserError } from '../utils/errors/userErrors';
+import { ChannelNotFoundError, UnauthorizedUserError, ProfileEditingIsForbiddenError } from '../utils/errors/userErrors';
 import { IUserPermissions, PermissionTypes } from '../permissions/userPermissions.interface';
 import { UserPermissionsManager } from '../permissions/userPermissions.manager';
 export class ChannelManager {
@@ -32,6 +32,8 @@ export class ChannelManager {
         const currentChannel: IChannel | null = await ChannelManager.getById(id);
 
         if (currentChannel) {
+            if (currentChannel.isProfile) throw new ProfileEditingIsForbiddenError();
+
             if (requestingUser === currentChannel.user) {
                 isPermitted = true;
             } else {

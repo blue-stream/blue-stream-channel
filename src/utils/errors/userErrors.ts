@@ -48,6 +48,12 @@ export class UserPermissionsAlreadyExistsError extends UserError {
     }
 }
 
+export class ProfileEditingIsForbiddenError extends UserError {
+    constructor(message?: string) {
+        super(message || 'Profile channels can not be updated', 400);
+    }
+}
+
 export class OwnerPermissionsCanNotBeRemovedError extends UserError {
     constructor(message?: string) {
         super(message || 'Owner\'s permissions can\'t be removed', 400);
