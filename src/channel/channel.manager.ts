@@ -60,6 +60,8 @@ export class ChannelManager {
         const currentChannel: IChannel | null = await ChannelManager.getById(id);
 
         if (currentChannel) {
+            if (currentChannel.isProfile) throw new ProfileEditingIsForbiddenError();
+
             if (requestingUser === currentChannel.user) {
                 isPermitted = true;
             } else {
