@@ -6,7 +6,7 @@ import { IChannel } from '../channel/channel.interface';
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { UserPermissionsManager } from './userPermissions.manager';
 import { ChannelManager } from '../channel/channel.manager';
-import { UnauthorizedUserError, UserPermissionsAlreadyExistsError, OwnerPermissionsCanNotBeRemovedError } from '../utils/errors/userErrors';
+import { UnauthorizedUserError, UserPermissionsAlreadyExistsError, OwnerPermissionsCanNotBeRemovedError, ProfileEditingIsForbiddenError } from '../utils/errors/userErrors';
 
 const validId: string = new mongoose.Types.ObjectId().toHexString();
 const invalidId: string = 'invalid id';
@@ -105,6 +105,22 @@ describe('User Permissions Manager', function () {
                     expect(hasThrown).to.be.true;
                 }
             });
+
+            it('Should throw ProfileEditingIsForbiddenError when trying to create UserPermissions for a profile channel', async function () {
+                let hasThrown = false;
+
+                try {
+                    const profileChannel = await ChannelManager.create({...channel, isProfile: true})
+                    await UserPermissionsManager.create({ ...userPermissions1, channel: profileChannel.id! }, profileChannel.user);
+                } catch (err) {
+                    hasThrown = true;
+                    expect(err).to.exist;
+                    expect(err).to.have.property('name', ProfileEditingIsForbiddenError.name);
+                    expect(err).to.have.property('message', new ProfileEditingIsForbiddenError().message);
+                } finally {
+                    expect(hasThrown).to.be.true;
+                }
+            });
         });
 
         context('When User Permissions are invalid', function () {
@@ -179,6 +195,22 @@ describe('User Permissions Manager', function () {
                     expect(hasThrown).to.be.true;
                 }
             });
+
+            it('Should throw ProfileEditingIsForbiddenError when trying to update UserPermissions for a profile channel', async function () {
+                let hasThrown = false;
+
+                try {
+                    const profileChannel = await ChannelManager.create({...channel, isProfile: true})
+                    await UserPermissionsManager.updateOne(profileChannel.user, profileChannel.user, profileChannel.id!, userPermissionsDataToUpdate.permissions!);
+                } catch (err) {
+                    hasThrown = true;
+                    expect(err).to.exist;
+                    expect(err).to.have.property('name', ProfileEditingIsForbiddenError.name);
+                    expect(err).to.have.property('message', new ProfileEditingIsForbiddenError().message);
+                } finally {
+                    expect(hasThrown).to.be.true;
+                }
+            });
         });
     });
 
@@ -215,6 +247,21 @@ describe('User Permissions Manager', function () {
             it('Should return null when user does not have permissions to the channel', async function () {
                 const deleted = await UserPermissionsManager.deleteOne(createdChannel.user, randomUser, createdUserPermissions.channel);
                 expect(deleted).to.be.null;
+            });
+            it('Should throw ProfileEditingIsForbiddenError when trying to delete UserPermissions for a profile channel', async function () {
+                let hasThrown = false;
+
+                try {
+                    const profileChannel = await ChannelManager.create({...channel, isProfile: true})
+                    await UserPermissionsManager.deleteOne(profileChannel.user, profileChannel.user, profileChannel.id!);
+                } catch (err) {
+                    hasThrown = true;
+                    expect(err).to.exist;
+                    expect(err).to.have.property('name', ProfileEditingIsForbiddenError.name);
+                    expect(err).to.have.property('message', new ProfileEditingIsForbiddenError().message);
+                } finally {
+                    expect(hasThrown).to.be.true;
+                }
             });
             it('Should throw UnauthorizedUserError when user is the owner', async function () {
                 let hasThrown = false;
