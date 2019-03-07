@@ -21,9 +21,10 @@ const channelSchema: mongoose.Schema = new mongoose.Schema(
         },
         description: {
             type: String,
-            required: true,
-            minlength: config.channel.description.minLength,
-            maxlength: config.channel.description.maxLength,
+            required: false,
+            validator: ( value: string ) => {
+                return ChannelValidations.isDescriptionValid(value);
+            },
         },
         isProfile: {
             type: Boolean,
