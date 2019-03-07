@@ -9,7 +9,7 @@ import { IUserPermissions, PermissionTypes } from '../permissions/userPermission
 import { ChannelRepository } from './channel.repository';
 import { UserPermissionsManager } from '../permissions/userPermissions.manager';
 import { ChannelManager } from './channel.manager';
-import { UnauthorizedUserError } from '../utils/errors/userErrors';
+import { UnauthorizedUserError, ProfileEditingIsForbiddenError } from '../utils/errors/userErrors';
 
 const validId: string = new mongoose.Types.ObjectId().toHexString();
 const invalidId: string = 'invalid id';
@@ -99,6 +99,22 @@ describe('Channel Repository', function () {
                     expect(updatedDoc).to.have.property(prop, channelDataToUpdate[prop as keyof IChannel]);
                 }
             });
+
+            it('Should throw ProfileEditingIsForbiddenError when trying to edit a profile channel', async function () {
+                let hasThrown = false;
+
+                try {
+                    const profileChannel = await ChannelManager.create({ ...channel, isProfile: true })
+                    await ChannelManager.updateById(profileChannel.id!, { name: 'edited', description: 'edited' }, profileChannel.user);
+                } catch (err) {
+                    hasThrown = true;
+                    expect(err).to.exist;
+                    expect(err).to.have.property('name', ProfileEditingIsForbiddenError.name);
+                    expect(err).to.have.property('message', new ProfileEditingIsForbiddenError().message);
+                } finally {
+                    expect(hasThrown).to.be.true;
+                }
+            });
         });
 
         context('When user does not have permissions to the channel', function () {
@@ -151,6 +167,22 @@ describe('Channel Repository', function () {
                 const deletedDoc = await ChannelManager.deleteById(createdChannel.id!, admin.user);
                 expect(deletedDoc).to.exist;
                 expect(deletedDoc).to.have.property('id', createdChannel.id);
+            });
+
+            it('Should throw ProfileEditingIsForbiddenError when trying to delete a profile channel', async function () {
+                let hasThrown = false;
+
+                try {
+                    const profileChannel = await ChannelManager.create({ ...channel, isProfile: true })
+                    await ChannelManager.deleteById(profileChannel.id!, profileChannel.user);
+                } catch (err) {
+                    hasThrown = true;
+                    expect(err).to.exist;
+                    expect(err).to.have.property('name', ProfileEditingIsForbiddenError.name);
+                    expect(err).to.have.property('message', new ProfileEditingIsForbiddenError().message);
+                } finally {
+                    expect(hasThrown).to.be.true;
+                }
             });
         });
 

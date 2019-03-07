@@ -1,6 +1,6 @@
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { UserPermissionsRepository } from './userPermissions.repository';
-import { UnauthorizedUserError, ChannelNotFoundError, UserPermissionsAlreadyExistsError, OwnerPermissionsCanNotBeRemovedError } from '../utils/errors/userErrors';
+import { UnauthorizedUserError, ChannelNotFoundError, UserPermissionsAlreadyExistsError, OwnerPermissionsCanNotBeRemovedError, ProfileEditingIsForbiddenError } from '../utils/errors/userErrors';
 import { ChannelManager } from '../channel/channel.manager';
 
 export class UserPermissionsManager {
@@ -17,12 +17,22 @@ export class UserPermissionsManager {
         if (!channel) throw new ChannelNotFoundError();
         if (user) throw new UserPermissionsAlreadyExistsError();
         if (!isRequestingUserAdmin && channel.user !== requestingUser) throw new UnauthorizedUserError();
+        if (channel.isProfile &&
+            (userPermissions.user !== requestingUser ||
+             requestingUser !== channel.user)) throw new ProfileEditingIsForbiddenError();
 
         return UserPermissionsRepository.create(userPermissions);
     }
 
     static async updateOne(requestingUser: string, user: string, channel: string, permissions: PermissionTypes[]) {
-        const isRequestingUserAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, channel);
+        const returnedResults = await Promise.all([
+            UserPermissionsManager.isUserAdmin(requestingUser, channel),
+            ChannelManager.getById(channel),
+        ]);
+
+        const [isRequestingUserAdmin, retChannel] = returnedResults;
+
+        if (retChannel && retChannel.isProfile) throw new ProfileEditingIsForbiddenError();
 
         if (isRequestingUserAdmin) {
             return UserPermissionsRepository.updateOne(user, channel, permissions);
@@ -38,6 +48,8 @@ export class UserPermissionsManager {
         ]);
 
         const [isRequestingUserAdmin, channel] = returnedResults;
+
+        if (channel && channel.isProfile) throw new ProfileEditingIsForbiddenError();
 
         if (isRequestingUserAdmin) {
             if (channel && channel.user !== user) {
