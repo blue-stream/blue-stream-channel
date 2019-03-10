@@ -401,8 +401,15 @@ describe('User Permissions Manager', function () {
                 expect(createdUserPermissions4).have.property('user', 'd@d');
             });
 
-            it('Should return all users that have permissions to the channel', async function () {
-                const documents = await UserPermissionsManager.getChannelPermittedUsers(admin.user, createdChannel.id!);
+            it('Should return all users that have permissions to the channel when user is admin', async function () {
+                const documents = await UserPermissionsManager.getChannelPermittedUsers(admin.user, false, createdChannel.id!);
+                expect(documents).to.exist;
+                expect(documents).to.be.an('array');
+                expect(documents).to.have.lengthOf(5);
+            });
+
+            it('Should return all users that have permissions to the channel when user is sysAdmin', async function () {
+                const documents = await UserPermissionsManager.getChannelPermittedUsers('randomuser@user', true, createdChannel.id!);
                 expect(documents).to.exist;
                 expect(documents).to.be.an('array');
                 expect(documents).to.have.lengthOf(5);
@@ -461,8 +468,15 @@ describe('User Permissions Manager', function () {
                 expect(createdUserPermissions4).have.property('user', 'd@d');
             });
 
-            it('Should return amount of users that have permissions to the channel', async function () {
-                const documents = await UserPermissionsManager.getChannelPermittedUsersAmount(admin.user, createdChannel.id!);
+            it('Should return amount of users that have permissions to the channel when user is admin', async function () {
+                const documents = await UserPermissionsManager.getChannelPermittedUsersAmount(admin.user, false, createdChannel.id!);
+                expect(documents).to.exist;
+                expect(documents).to.be.an('number');
+                expect(documents).to.be.equal(5);
+            });
+
+            it('Should return amount of users that have permissions to the channel when user is sysAdmin', async function () {
+                const documents = await UserPermissionsManager.getChannelPermittedUsersAmount('randomuser@user', true, createdChannel.id!);
                 expect(documents).to.exist;
                 expect(documents).to.be.an('number');
                 expect(documents).to.be.equal(5);

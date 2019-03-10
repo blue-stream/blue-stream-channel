@@ -42,7 +42,7 @@ export class UserPermissionsController {
         const channel: string = req.params.channelId;
         const requestingUser: string = req.user.id;
 
-        res.json(await UserPermissionsManager.getChannelPermittedUsers(requestingUser, channel, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
+        res.json(await UserPermissionsManager.getChannelPermittedUsers(requestingUser, req.user.isSysAdmin, channel, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
     }
 
     static async getUserPermittedChannels(req: Request, res: Response) {
@@ -55,7 +55,7 @@ export class UserPermissionsController {
         const channel: string = req.params.channelId;
         const requestingUser: string = req.user.id;
 
-        res.json(await UserPermissionsManager.getChannelPermittedUsersAmount(requestingUser, channel));
+        res.json(await UserPermissionsManager.getChannelPermittedUsersAmount(requestingUser, req.user.isSysAdmin, channel));
     }
 
     static async getUserPermittedChannelsAmount(req: Request, res: Response) {
