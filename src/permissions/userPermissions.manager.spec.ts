@@ -414,6 +414,21 @@ describe('User Permissions Manager', function () {
                 expect(documents).to.be.an('array');
                 expect(documents).to.have.lengthOf(5);
             });
+
+            it('Should throw UnauthorizedUserError when user is not an owner or admin', async function () {
+                let hasThrown = false;
+
+                try {
+                    await UserPermissionsManager.getChannelPermittedUsers('randomuser@user', false, createdChannel.id!);
+                } catch (err) {
+                    hasThrown = true;
+                    expect(err).to.exist;
+                    expect(err).to.have.property('name', UnauthorizedUserError.name);
+                    expect(err).to.have.property('message', new UnauthorizedUserError().message);
+                } finally {
+                    expect(hasThrown).to.be.true;
+                }
+            });
         });
     });
 
@@ -480,6 +495,21 @@ describe('User Permissions Manager', function () {
                 expect(documents).to.exist;
                 expect(documents).to.be.an('number');
                 expect(documents).to.be.equal(5);
+            });
+
+            it('Should throw UnauthorizedUserError when user is not an owner or admin', async function () {
+                let hasThrown = false;
+
+                try {
+                    await UserPermissionsManager.getChannelPermittedUsersAmount('randomuser@user', false, createdChannel.id!);
+                } catch (err) {
+                    hasThrown = true;
+                    expect(err).to.exist;
+                    expect(err).to.have.property('name', UnauthorizedUserError.name);
+                    expect(err).to.have.property('message', new UnauthorizedUserError().message);
+                } finally {
+                    expect(hasThrown).to.be.true;
+                }
             });
         });
     });

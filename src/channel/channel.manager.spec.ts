@@ -91,7 +91,7 @@ describe('Channel Repository', function () {
                     user: 'z@t',
                 };
 
-                const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user);
+                const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user, false);
                 const updatedDoc = await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, admin.user, false);
                 expect(updatedDoc).to.exist;
                 expect(updatedDoc).to.have.property('id', createdChannel.id);
@@ -107,7 +107,7 @@ describe('Channel Repository', function () {
                     user: 'z@t',
                 };
 
-                const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user);
+                const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user, false);
                 const updatedDoc = await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, 'unkownuser@useruser', true);
                 expect(updatedDoc).to.exist;
                 expect(updatedDoc).to.have.property('id', createdChannel.id);
@@ -179,7 +179,7 @@ describe('Channel Repository', function () {
                     user: 'z@t',
                 };
 
-                const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user);
+                const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user, false);
                 const deletedDoc = await ChannelManager.deleteById(createdChannel.id!, admin.user, false);
                 expect(deletedDoc).to.exist;
                 expect(deletedDoc).to.have.property('id', createdChannel.id);
@@ -192,7 +192,7 @@ describe('Channel Repository', function () {
                     user: 'z@t',
                 };
 
-                const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user);
+                const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user, false);
                 const deletedDoc = await ChannelManager.deleteById(createdChannel.id!, 'unkownuser@useruser', true);
                 expect(deletedDoc).to.exist;
                 expect(deletedDoc).to.have.property('id', createdChannel.id);
