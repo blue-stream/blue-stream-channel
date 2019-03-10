@@ -17,7 +17,7 @@ export class ChannelManager {
                 user: channel.user,
             };
 
-            await UserPermissionsManager.create(userPermissions, channel.user);
+            await UserPermissionsManager.create(userPermissions, channel.user, false);
         }
 
         return createdChannel;
