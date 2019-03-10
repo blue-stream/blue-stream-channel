@@ -108,7 +108,7 @@ describe('Channel Repository', function () {
                 };
 
                 const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user);
-                const updatedDoc = await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, admin.user, true);
+                const updatedDoc = await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, 'unkownuser@useruser', true);
                 expect(updatedDoc).to.exist;
                 expect(updatedDoc).to.have.property('id', createdChannel.id);
                 for (const prop in channelDataToUpdate) {
@@ -167,7 +167,7 @@ describe('Channel Repository', function () {
             });
 
             it('Should delete an existsing channel when user is channel\'s owner', async function () {
-                const deletedDoc = await ChannelManager.deleteById(createdChannel.id!, createdChannel.user);
+                const deletedDoc = await ChannelManager.deleteById(createdChannel.id!, createdChannel.user, false);
                 expect(deletedDoc).to.exist;
                 expect(deletedDoc).to.have.property('id', createdChannel.id);
             });
@@ -180,7 +180,20 @@ describe('Channel Repository', function () {
                 };
 
                 const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user);
-                const deletedDoc = await ChannelManager.deleteById(createdChannel.id!, admin.user);
+                const deletedDoc = await ChannelManager.deleteById(createdChannel.id!, admin.user, false);
+                expect(deletedDoc).to.exist;
+                expect(deletedDoc).to.have.property('id', createdChannel.id);
+            });
+
+            it('Should update an existsing channel when user is an sysAdmin', async function () {
+                const userPermissions: IUserPermissions = {
+                    channel: createdChannel.id!,
+                    permissions: [PermissionTypes.Admin],
+                    user: 'z@t',
+                };
+
+                const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user);
+                const deletedDoc = await ChannelManager.deleteById(createdChannel.id!, 'unkownuser@useruser', true);
                 expect(deletedDoc).to.exist;
                 expect(deletedDoc).to.have.property('id', createdChannel.id);
             });
@@ -190,7 +203,7 @@ describe('Channel Repository', function () {
 
                 try {
                     const profileChannel = await ChannelManager.create({ ...channel, isProfile: true })
-                    await ChannelManager.deleteById(profileChannel.id!, profileChannel.user);
+                    await ChannelManager.deleteById(profileChannel.id!, profileChannel.user, false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -212,7 +225,7 @@ describe('Channel Repository', function () {
                 let hasThrown = false;
 
                 try {
-                    await ChannelManager.deleteById(createdChannel.id!, 'd@dd');
+                    await ChannelManager.deleteById(createdChannel.id!, 'd@dd', false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;

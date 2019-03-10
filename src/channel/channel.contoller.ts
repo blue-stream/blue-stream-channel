@@ -34,7 +34,7 @@ export class ChannelController {
     }
 
     static async deleteById(req: Request, res: Response) {
-        const deleted = await ChannelManager.deleteById(req.params.id, req.user.id);
+        const deleted = await ChannelManager.deleteById(req.params.id, req.user.id, req.user.isSysAdmin);
         if (!deleted) {
             throw new ChannelNotFoundError();
         }
