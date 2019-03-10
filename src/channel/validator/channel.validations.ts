@@ -17,8 +17,9 @@ export class ChannelValidations {
     }
 
     public static isDescriptionValid(description: string) {
+        if (!description) return true;
+
         return (
-            description &&
             description.length <= config.channel.description.maxLength &&
             description.length >= config.channel.description.minLength
         );
