@@ -45,7 +45,7 @@ describe('Channel Router Module', function () {
 
     before(async function () {
 
-        await mongoose.connect(`mongodb://${config.db.host}:${config.db.port}/${config.db.name}`, { useNewUrlParser: true });
+        await mongoose.connect(config.db.connectionString, { useNewUrlParser: true });
         server = Server.bootstrap();
     });
 
