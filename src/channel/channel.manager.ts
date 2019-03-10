@@ -27,28 +27,25 @@ export class ChannelManager {
         return ChannelRepository.createMany(channels);
     }
 
-    static async updateById(id: string, channel: Partial<IChannel>, requestingUser: string) {
+    static async updateById(id: string, channel: Partial<IChannel>, requestingUser: string, isSystemAdmin: boolean) {
         let isPermitted: boolean = false;
         const currentChannel: IChannel | null = await ChannelManager.getById(id);
 
-        if (currentChannel) {
-            if (currentChannel.isProfile) throw new ProfileEditingIsForbiddenError();
+        if (!currentChannel) throw new ChannelNotFoundError();
+        if (currentChannel.isProfile) throw new ProfileEditingIsForbiddenError();
 
-            if (requestingUser === currentChannel.user) {
-                isPermitted = true;
-            } else {
-                const isAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, id);
-                if (isAdmin) isPermitted = true;
-            }
-
-            if (isPermitted) {
-                return ChannelRepository.updateById(id, channel);
-            }
-
-            throw new UnauthorizedUserError();
+        if (isSystemAdmin) {
+            isPermitted = true;
+        } else if (requestingUser === currentChannel.user) {
+            isPermitted = true;
+        } else {
+            const isAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, id);
+            if (isAdmin) isPermitted = true;
         }
 
-        throw new ChannelNotFoundError();
+        if (!isPermitted) throw new UnauthorizedUserError();
+
+        return ChannelRepository.updateById(id, channel);
     }
 
     static updateMany(channelFilter: Partial<IChannel>, channel: Partial<IChannel>) {

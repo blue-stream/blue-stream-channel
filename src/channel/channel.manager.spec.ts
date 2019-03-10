@@ -76,7 +76,7 @@ describe('Channel Repository', function () {
             });
 
             it('Should update an existsing channel when user is channel\'s owner', async function () {
-                const updatedDoc = await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, createdChannel.user);
+                const updatedDoc = await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, createdChannel.user, false);
                 expect(updatedDoc).to.exist;
                 expect(updatedDoc).to.have.property('id', createdChannel.id);
                 for (const prop in channelDataToUpdate) {
@@ -92,7 +92,23 @@ describe('Channel Repository', function () {
                 };
 
                 const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user);
-                const updatedDoc = await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, admin.user);
+                const updatedDoc = await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, admin.user, false);
+                expect(updatedDoc).to.exist;
+                expect(updatedDoc).to.have.property('id', createdChannel.id);
+                for (const prop in channelDataToUpdate) {
+                    expect(updatedDoc).to.have.property(prop, channelDataToUpdate[prop as keyof IChannel]);
+                }
+            });
+
+            it('Should update an existsing channel when user is an sysAdmin', async function () {
+                const userPermissions: IUserPermissions = {
+                    channel: createdChannel.id!,
+                    permissions: [PermissionTypes.Admin],
+                    user: 'z@t',
+                };
+
+                const admin = await UserPermissionsManager.create(userPermissions, createdChannel.user);
+                const updatedDoc = await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, admin.user, true);
                 expect(updatedDoc).to.exist;
                 expect(updatedDoc).to.have.property('id', createdChannel.id);
                 for (const prop in channelDataToUpdate) {
@@ -105,7 +121,7 @@ describe('Channel Repository', function () {
 
                 try {
                     const profileChannel = await ChannelManager.create({ ...channel, isProfile: true })
-                    await ChannelManager.updateById(profileChannel.id!, { name: 'edited', description: 'edited' }, profileChannel.user);
+                    await ChannelManager.updateById(profileChannel.id!, { name: 'edited', description: 'edited' }, profileChannel.user, false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -127,7 +143,7 @@ describe('Channel Repository', function () {
                 let hasThrown = false;
 
                 try {
-                    await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, 'd@dd');
+                    await ChannelManager.updateById(createdChannel.id!, channelDataToUpdate, 'd@dd', false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
