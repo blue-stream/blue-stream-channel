@@ -118,7 +118,7 @@ describe('User Permissions Manager', function () {
                 let hasThrown = false;
 
                 try {
-                    const profileChannel = await ChannelManager.create({...channel, isProfile: true})
+                    const profileChannel = await ChannelManager.create({ ...channel, isProfile: true });
                     await UserPermissionsManager.create({ ...userPermissions1, channel: profileChannel.id! }, profileChannel.user, false);
                 } catch (err) {
                     hasThrown = true;
@@ -216,7 +216,7 @@ describe('User Permissions Manager', function () {
                 let hasThrown = false;
 
                 try {
-                    const profileChannel = await ChannelManager.create({...channel, isProfile: true})
+                    const profileChannel = await ChannelManager.create({ ...channel, isProfile: true });
                     await UserPermissionsManager.updateOne(profileChannel.user, profileChannel.user, profileChannel.id!, userPermissionsDataToUpdate.permissions!, false);
                 } catch (err) {
                     hasThrown = true;
@@ -274,7 +274,7 @@ describe('User Permissions Manager', function () {
                 let hasThrown = false;
 
                 try {
-                    const profileChannel = await ChannelManager.create({...channel, isProfile: true})
+                    const profileChannel = await ChannelManager.create({ ...channel, isProfile: true });
                     await UserPermissionsManager.deleteOne(profileChannel.user, profileChannel.user, profileChannel.id!, false);
                 } catch (err) {
                     hasThrown = true;

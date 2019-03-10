@@ -22,7 +22,7 @@ const channelSchema: mongoose.Schema = new mongoose.Schema(
         description: {
             type: String,
             required: false,
-            validator: ( value: string ) => {
+            validator: (value: string) => {
                 return ChannelValidations.isDescriptionValid(value);
             },
         },

@@ -120,7 +120,7 @@ describe('Channel Repository', function () {
                 let hasThrown = false;
 
                 try {
-                    const profileChannel = await ChannelManager.create({ ...channel, isProfile: true })
+                    const profileChannel = await ChannelManager.create({ ...channel, isProfile: true });
                     await ChannelManager.updateById(profileChannel.id!, { name: 'edited', description: 'edited' }, profileChannel.user, false);
                 } catch (err) {
                     hasThrown = true;
@@ -202,7 +202,7 @@ describe('Channel Repository', function () {
                 let hasThrown = false;
 
                 try {
-                    const profileChannel = await ChannelManager.create({ ...channel, isProfile: true })
+                    const profileChannel = await ChannelManager.create({ ...channel, isProfile: true });
                     await ChannelManager.deleteById(profileChannel.id!, profileChannel.user, false);
                 } catch (err) {
                     hasThrown = true;
