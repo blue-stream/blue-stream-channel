@@ -69,7 +69,7 @@ describe('User Permissions Manager', function () {
             });
 
             it('Should create UserPermissions when user is channel\'s owner', async function () {
-                const createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions1, channel: createdChannel.id! }, channel.user);
+                const createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions1, channel: createdChannel.id! }, channel.user, false);
                 expect(createdUserPermissions).to.exist;
                 expect(createdUserPermissions).to.have.property('user', userPermissions1.user);
                 expect(createdUserPermissions.channel.toString()).to.equal(createdChannel.id);
@@ -77,8 +77,16 @@ describe('User Permissions Manager', function () {
             });
 
             it('Should create UserPermissions when user is channel\'s admin', async function () {
-                const admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user);
-                const createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions3, channel: createdChannel.id! }, admin.user);
+                const admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user, false);
+                const createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions3, channel: createdChannel.id! }, admin.user, false);
+                expect(createdUserPermissions).to.exist;
+                expect(createdUserPermissions).to.have.property('user', userPermissions3.user);
+                expect(createdUserPermissions.channel.toString()).to.equal(createdChannel.id);
+                expect(createdUserPermissions.permissions).to.contain(userPermissions3.permissions[0]);
+            });
+
+            it('Should create UserPermissions when user is a sysAdmin', async function () {
+                const createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions3, channel: createdChannel.id! }, 'randomuser@user', true);
                 expect(createdUserPermissions).to.exist;
                 expect(createdUserPermissions).to.have.property('user', userPermissions3.user);
                 expect(createdUserPermissions.channel.toString()).to.equal(createdChannel.id);
@@ -86,7 +94,7 @@ describe('User Permissions Manager', function () {
             });
 
             it('Should not create UserPermissions when user already has permissions to the channel', async function () {
-                const createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions1, channel: createdChannel.id! }, channel.user);
+                const createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions1, channel: createdChannel.id! }, channel.user, false);
                 expect(createdUserPermissions).to.exist;
                 expect(createdUserPermissions).to.have.property('user', userPermissions1.user);
                 expect(createdUserPermissions.channel.toString()).to.equal(createdChannel.id);
@@ -95,7 +103,7 @@ describe('User Permissions Manager', function () {
                 let hasThrown = false;
 
                 try {
-                    await UserPermissionsManager.create({ ...userPermissions1, channel: createdChannel.id! }, channel.user);
+                    await UserPermissionsManager.create({ ...userPermissions1, channel: createdChannel.id! }, channel.user, false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -111,7 +119,7 @@ describe('User Permissions Manager', function () {
 
                 try {
                     const profileChannel = await ChannelManager.create({...channel, isProfile: true})
-                    await UserPermissionsManager.create({ ...userPermissions1, channel: profileChannel.id! }, profileChannel.user);
+                    await UserPermissionsManager.create({ ...userPermissions1, channel: profileChannel.id! }, profileChannel.user, false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -133,7 +141,7 @@ describe('User Permissions Manager', function () {
                 let hasThrown = false;
 
                 try {
-                    await UserPermissionsManager.create({ ...userPermissions1, channel: createdChannel.id! }, randomUser);
+                    await UserPermissionsManager.create({ ...userPermissions1, channel: createdChannel.id! }, randomUser, false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -157,15 +165,15 @@ describe('User Permissions Manager', function () {
                 createdChannel = await ChannelManager.create(channel);
                 expect(createdChannel).have.property('id');
 
-                admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user);
+                admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user, false);
                 expect(admin).have.property('user', userPermissions2.user);
 
-                createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions3, channel: createdChannel.id! }, admin.user);
+                createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions3, channel: createdChannel.id! }, admin.user, false);
                 expect(createdUserPermissions).have.property('user', userPermissions3.user);
             });
 
             it('Should update an existsing userPermissions when requestingUser is admin', async function () {
-                const updatedDoc = await UserPermissionsManager.updateOne(admin.user, createdUserPermissions.user, createdChannel.id!, userPermissionsDataToUpdate.permissions!);
+                const updatedDoc = await UserPermissionsManager.updateOne(admin.user, createdUserPermissions.user, createdChannel.id!, userPermissionsDataToUpdate.permissions!, false);
                 expect(updatedDoc).to.exist;
                 expect(updatedDoc).to.have.property('user', userPermissions3.user);
                 expect(updatedDoc).to.have.property('permissions');
@@ -173,7 +181,15 @@ describe('User Permissions Manager', function () {
             });
 
             it('Should update an existsing userPermissions when requestingUser is channel\'s owner', async function () {
-                const updatedDoc = await UserPermissionsManager.updateOne(createdChannel.user, createdUserPermissions.user, createdChannel.id!, userPermissionsDataToUpdate.permissions!);
+                const updatedDoc = await UserPermissionsManager.updateOne(createdChannel.user, createdUserPermissions.user, createdChannel.id!, userPermissionsDataToUpdate.permissions!, false);
+                expect(updatedDoc).to.exist;
+                expect(updatedDoc).to.have.property('user', userPermissions3.user);
+                expect(updatedDoc).to.have.property('permissions');
+                expect(updatedDoc!.permissions).to.contain(userPermissionsDataToUpdate.permissions![0]);
+            });
+
+            it('Should update an existsing userPermissions when requestingUser is a sysAdmin', async function () {
+                const updatedDoc = await UserPermissionsManager.updateOne('randomuser@user', createdUserPermissions.user, createdChannel.id!, userPermissionsDataToUpdate.permissions!, true);
                 expect(updatedDoc).to.exist;
                 expect(updatedDoc).to.have.property('user', userPermissions3.user);
                 expect(updatedDoc).to.have.property('permissions');
@@ -185,7 +201,7 @@ describe('User Permissions Manager', function () {
                 let hasThrown = false;
 
                 try {
-                    const updatedDoc = await UserPermissionsManager.updateOne(randomUser, createdUserPermissions.user, createdChannel.id!, userPermissionsDataToUpdate.permissions!);
+                    const updatedDoc = await UserPermissionsManager.updateOne(randomUser, createdUserPermissions.user, createdChannel.id!, userPermissionsDataToUpdate.permissions!, false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -201,7 +217,7 @@ describe('User Permissions Manager', function () {
 
                 try {
                     const profileChannel = await ChannelManager.create({...channel, isProfile: true})
-                    await UserPermissionsManager.updateOne(profileChannel.user, profileChannel.user, profileChannel.id!, userPermissionsDataToUpdate.permissions!);
+                    await UserPermissionsManager.updateOne(profileChannel.user, profileChannel.user, profileChannel.id!, userPermissionsDataToUpdate.permissions!, false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -225,27 +241,33 @@ describe('User Permissions Manager', function () {
                 createdChannel = await ChannelManager.create(channel);
                 expect(createdChannel).have.property('id');
 
-                admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user);
+                admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user, false);
                 expect(admin).have.property('user', userPermissions2.user);
 
-                createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions3, channel: createdChannel.id! }, admin.user);
+                createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions3, channel: createdChannel.id! }, admin.user, false);
                 expect(createdUserPermissions).have.property('user', userPermissions3.user);
             });
 
             it('Should delete User Permissions by user and channel when requesting user is admin', async function () {
-                const deleted = await UserPermissionsManager.deleteOne(admin.user, createdUserPermissions.user, createdUserPermissions.channel);
+                const deleted = await UserPermissionsManager.deleteOne(admin.user, createdUserPermissions.user, createdUserPermissions.channel, false);
+                expect(deleted).to.exist;
+                expect(deleted).to.have.property('user', createdUserPermissions.user);
+            });
+
+            it('Should delete User Permissions by user and channel when requesting user is a sysAdmin', async function () {
+                const deleted = await UserPermissionsManager.deleteOne('randomuser@user', createdUserPermissions.user, createdUserPermissions.channel, true);
                 expect(deleted).to.exist;
                 expect(deleted).to.have.property('user', createdUserPermissions.user);
             });
 
             it('Should delete User Permissions by user and channel when requesting user is owner', async function () {
-                const deleted = await UserPermissionsManager.deleteOne(createdChannel.user, createdUserPermissions.user, createdUserPermissions.channel);
+                const deleted = await UserPermissionsManager.deleteOne(createdChannel.user, createdUserPermissions.user, createdUserPermissions.channel, false);
                 expect(deleted).to.exist;
                 expect(deleted).to.have.property('user', createdUserPermissions.user);
             });
 
             it('Should return null when user does not have permissions to the channel', async function () {
-                const deleted = await UserPermissionsManager.deleteOne(createdChannel.user, randomUser, createdUserPermissions.channel);
+                const deleted = await UserPermissionsManager.deleteOne(createdChannel.user, randomUser, createdUserPermissions.channel, false);
                 expect(deleted).to.be.null;
             });
             it('Should throw ProfileEditingIsForbiddenError when trying to delete UserPermissions for a profile channel', async function () {
@@ -253,7 +275,7 @@ describe('User Permissions Manager', function () {
 
                 try {
                     const profileChannel = await ChannelManager.create({...channel, isProfile: true})
-                    await UserPermissionsManager.deleteOne(profileChannel.user, profileChannel.user, profileChannel.id!);
+                    await UserPermissionsManager.deleteOne(profileChannel.user, profileChannel.user, profileChannel.id!, false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -267,7 +289,7 @@ describe('User Permissions Manager', function () {
                 let hasThrown = false;
 
                 try {
-                    await UserPermissionsManager.deleteOne(admin.user, createdChannel.user, createdUserPermissions.channel);
+                    await UserPermissionsManager.deleteOne(admin.user, createdChannel.user, createdUserPermissions.channel, false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -284,7 +306,7 @@ describe('User Permissions Manager', function () {
                 let hasThrown = false;
 
                 try {
-                    await UserPermissionsManager.deleteOne(randomUser, createdUserPermissions.user, createdUserPermissions.channel);
+                    await UserPermissionsManager.deleteOne(randomUser, createdUserPermissions.user, createdUserPermissions.channel, false);
                 } catch (err) {
                     hasThrown = true;
                     expect(err).to.exist;
@@ -308,10 +330,10 @@ describe('User Permissions Manager', function () {
                 createdChannel = await ChannelManager.create(channel);
                 expect(createdChannel).have.property('id');
 
-                admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user);
+                admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user, false);
                 expect(admin).have.property('user', userPermissions2.user);
 
-                createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions3, channel: createdChannel.id! }, admin.user);
+                createdUserPermissions = await UserPermissionsManager.create({ ...userPermissions3, channel: createdChannel.id! }, admin.user, false);
                 expect(createdUserPermissions).have.property('user', userPermissions3.user);
             });
 
@@ -365,13 +387,13 @@ describe('User Permissions Manager', function () {
                 expect(createdChannel).have.property('id');
                 expect(randomChannel).have.property('id');
 
-                admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user);
+                admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user, false);
                 expect(admin).have.property('user', userPermissions2.user);
 
-                createdUserPermissions1 = await UserPermissionsManager.create({ user: 'd@a', channel: createdChannel.id!, permissions: [PermissionTypes.Remove] }, admin.user);
-                createdUserPermissions2 = await UserPermissionsManager.create({ user: 'd@b', channel: createdChannel.id!, permissions: [PermissionTypes.Edit] }, admin.user);
-                createdUserPermissions3 = await UserPermissionsManager.create({ user: 'd@c', channel: createdChannel.id!, permissions: [PermissionTypes.Upload] }, admin.user);
-                createdUserPermissions4 = await UserPermissionsManager.create({ user: 'd@d', channel: randomChannel.id!, permissions: [PermissionTypes.Upload] }, randomChannel.user);
+                createdUserPermissions1 = await UserPermissionsManager.create({ user: 'd@a', channel: createdChannel.id!, permissions: [PermissionTypes.Remove] }, admin.user, false);
+                createdUserPermissions2 = await UserPermissionsManager.create({ user: 'd@b', channel: createdChannel.id!, permissions: [PermissionTypes.Edit] }, admin.user, false);
+                createdUserPermissions3 = await UserPermissionsManager.create({ user: 'd@c', channel: createdChannel.id!, permissions: [PermissionTypes.Upload] }, admin.user, false);
+                createdUserPermissions4 = await UserPermissionsManager.create({ user: 'd@d', channel: randomChannel.id!, permissions: [PermissionTypes.Upload] }, randomChannel.user, false);
 
                 expect(createdUserPermissions1).have.property('user', 'd@a');
                 expect(createdUserPermissions2).have.property('user', 'd@b');
@@ -425,13 +447,13 @@ describe('User Permissions Manager', function () {
                 expect(createdChannel).have.property('id');
                 expect(randomChannel).have.property('id');
 
-                admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user);
+                admin = await UserPermissionsManager.create({ ...userPermissions2, channel: createdChannel.id! }, channel.user, false);
                 expect(admin).have.property('user', userPermissions2.user);
 
-                createdUserPermissions1 = await UserPermissionsManager.create({ user: 'd@a', channel: createdChannel.id!, permissions: [PermissionTypes.Remove] }, admin.user);
-                createdUserPermissions2 = await UserPermissionsManager.create({ user: 'd@b', channel: createdChannel.id!, permissions: [PermissionTypes.Edit] }, admin.user);
-                createdUserPermissions3 = await UserPermissionsManager.create({ user: 'd@c', channel: createdChannel.id!, permissions: [PermissionTypes.Upload] }, admin.user);
-                createdUserPermissions4 = await UserPermissionsManager.create({ user: 'd@d', channel: randomChannel.id!, permissions: [PermissionTypes.Upload] }, randomChannel.user);
+                createdUserPermissions1 = await UserPermissionsManager.create({ user: 'd@a', channel: createdChannel.id!, permissions: [PermissionTypes.Remove] }, admin.user, false);
+                createdUserPermissions2 = await UserPermissionsManager.create({ user: 'd@b', channel: createdChannel.id!, permissions: [PermissionTypes.Edit] }, admin.user, false);
+                createdUserPermissions3 = await UserPermissionsManager.create({ user: 'd@c', channel: createdChannel.id!, permissions: [PermissionTypes.Upload] }, admin.user, false);
+                createdUserPermissions4 = await UserPermissionsManager.create({ user: 'd@d', channel: randomChannel.id!, permissions: [PermissionTypes.Upload] }, randomChannel.user, false);
 
                 expect(createdUserPermissions1).have.property('user', 'd@a');
                 expect(createdUserPermissions2).have.property('user', 'd@b');
