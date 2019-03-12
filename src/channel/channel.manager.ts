@@ -34,9 +34,7 @@ export class ChannelManager {
         if (!currentChannel) throw new ChannelNotFoundError();
         if (currentChannel.isProfile) throw new ProfileEditingIsForbiddenError();
 
-        if (isSystemAdmin) {
-            isPermitted = true;
-        } else if (requestingUser === currentChannel.user) {
+        if (requestingUser === currentChannel.user || isSystemAdmin) {
             isPermitted = true;
         } else {
             const isAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, id);
@@ -59,9 +57,7 @@ export class ChannelManager {
         if (!currentChannel) throw new ChannelNotFoundError();
         if (currentChannel.isProfile) throw new ProfileEditingIsForbiddenError();
 
-        if (isSystemAdmin) {
-            isPermitted = true;
-        } else if (requestingUser === currentChannel.user) {
+        if (requestingUser === currentChannel.user || isSystemAdmin) {
             isPermitted = true;
         } else {
             const isAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, id);
