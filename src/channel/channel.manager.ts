@@ -17,7 +17,7 @@ export class ChannelManager {
                 user: channel.user,
             };
 
-            await UserPermissionsManager.create(userPermissions, channel.user);
+            await UserPermissionsManager.create(userPermissions, channel.user, false);
         }
 
         return createdChannel;
@@ -27,62 +27,52 @@ export class ChannelManager {
         return ChannelRepository.createMany(channels);
     }
 
-    static async updateById(id: string, channel: Partial<IChannel>, requestingUser: string) {
+    static async updateById(id: string, channel: Partial<IChannel>, requestingUser: string, isSystemAdmin: boolean) {
         let isPermitted: boolean = false;
         const currentChannel: IChannel | null = await ChannelManager.getById(id);
 
-        if (currentChannel) {
-            if (currentChannel.isProfile) throw new ProfileEditingIsForbiddenError();
+        if (!currentChannel) throw new ChannelNotFoundError();
+        if (currentChannel.isProfile) throw new ProfileEditingIsForbiddenError();
 
-            if (requestingUser === currentChannel.user) {
-                isPermitted = true;
-            } else {
-                const isAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, id);
-                if (isAdmin) isPermitted = true;
-            }
-
-            if (isPermitted) {
-                return ChannelRepository.updateById(id, channel);
-            }
-
-            throw new UnauthorizedUserError();
+        if (requestingUser === currentChannel.user || isSystemAdmin) {
+            isPermitted = true;
+        } else {
+            const isAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, id);
+            if (isAdmin) isPermitted = true;
         }
 
-        throw new ChannelNotFoundError();
+        if (!isPermitted) throw new UnauthorizedUserError();
+
+        return ChannelRepository.updateById(id, channel);
     }
 
     static updateMany(channelFilter: Partial<IChannel>, channel: Partial<IChannel>) {
         return ChannelRepository.updateMany(channelFilter, channel);
     }
 
-    static async deleteById(id: string, requestingUser: string) {
+    static async deleteById(id: string, requestingUser: string, isSystemAdmin: boolean) {
         let isPermitted: boolean = false;
         const currentChannel: IChannel | null = await ChannelManager.getById(id);
 
-        if (currentChannel) {
-            if (currentChannel.isProfile) throw new ProfileEditingIsForbiddenError();
+        if (!currentChannel) throw new ChannelNotFoundError();
+        if (currentChannel.isProfile) throw new ProfileEditingIsForbiddenError();
 
-            if (requestingUser === currentChannel.user) {
-                isPermitted = true;
-            } else {
-                const isAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, id);
-                if (isAdmin) isPermitted = true;
-            }
-
-            if (isPermitted) {
-                const removed: IChannel | null = await ChannelRepository.deleteById(id);
-
-                if (removed) {
-                    ChannelBroker.publish('channelService.channel.remove.succeeded', { id });
-                }
-
-                return removed;
-            }
-
-            throw new UnauthorizedUserError();
+        if (requestingUser === currentChannel.user || isSystemAdmin) {
+            isPermitted = true;
+        } else {
+            const isAdmin: boolean = await UserPermissionsManager.isUserAdmin(requestingUser, id);
+            if (isAdmin) isPermitted = true;
         }
 
-        throw new ChannelNotFoundError();
+        if (!isPermitted) throw new UnauthorizedUserError();
+
+        const removed: IChannel | null = await ChannelRepository.deleteById(id);
+
+        if (removed) {
+            ChannelBroker.publish('channelService.channel.remove.succeeded', { id });
+        }
+
+        return removed;
     }
 
     static getSearched(

@@ -11,7 +11,7 @@ export class UserPermissionsController {
         };
         const requestingUser: string = req.user.id;
 
-        res.json(await UserPermissionsManager.create(userPermissions, requestingUser));
+        res.json(await UserPermissionsManager.create(userPermissions, requestingUser, req.user.isSysAdmin));
     }
 
     static async updateOne(req: Request, res: Response) {
@@ -20,7 +20,7 @@ export class UserPermissionsController {
         const permissions: PermissionTypes[] = req.body.permissions;
         const requestingUser: string = req.user.id;
 
-        res.json(await UserPermissionsManager.updateOne(requestingUser, user, channel, permissions));
+        res.json(await UserPermissionsManager.updateOne(requestingUser, user, channel, permissions, req.user.isSysAdmin));
     }
 
     static async deleteOne(req: Request, res: Response) {
@@ -28,7 +28,7 @@ export class UserPermissionsController {
         const channel: string = req.query.channel;
         const requestingUser: string = req.user.id;
 
-        res.json(await UserPermissionsManager.deleteOne(requestingUser, user, channel));
+        res.json(await UserPermissionsManager.deleteOne(requestingUser, user, channel, req.user.isSysAdmin));
     }
 
     static async getOne(req: Request, res: Response) {
@@ -42,7 +42,7 @@ export class UserPermissionsController {
         const channel: string = req.params.channelId;
         const requestingUser: string = req.user.id;
 
-        res.json(await UserPermissionsManager.getChannelPermittedUsers(requestingUser, channel, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
+        res.json(await UserPermissionsManager.getChannelPermittedUsers(requestingUser, req.user.isSysAdmin, channel, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
     }
 
     static async getUserPermittedChannels(req: Request, res: Response) {
@@ -55,7 +55,7 @@ export class UserPermissionsController {
         const channel: string = req.params.channelId;
         const requestingUser: string = req.user.id;
 
-        res.json(await UserPermissionsManager.getChannelPermittedUsersAmount(requestingUser, channel));
+        res.json(await UserPermissionsManager.getChannelPermittedUsersAmount(requestingUser, req.user.isSysAdmin, channel));
     }
 
     static async getUserPermittedChannelsAmount(req: Request, res: Response) {

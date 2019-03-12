@@ -5,7 +5,7 @@ import { ChannelManager } from '../channel/channel.manager';
 
 export class UserPermissionsManager {
 
-    static async create(userPermissions: IUserPermissions, requestingUser: string) {
+    static async create(userPermissions: IUserPermissions, requestingUser: string, isSysAdmin: boolean) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, userPermissions.channel),
             ChannelManager.getById(userPermissions.channel),
@@ -16,7 +16,7 @@ export class UserPermissionsManager {
 
         if (!channel) throw new ChannelNotFoundError();
         if (user) throw new UserPermissionsAlreadyExistsError();
-        if (!isRequestingUserAdmin && channel.user !== requestingUser) throw new UnauthorizedUserError();
+        if (!isSysAdmin && !isRequestingUserAdmin && channel.user !== requestingUser) throw new UnauthorizedUserError();
         if (channel.isProfile &&
             (userPermissions.user !== requestingUser ||
              requestingUser !== channel.user)) throw new ProfileEditingIsForbiddenError();
@@ -24,7 +24,7 @@ export class UserPermissionsManager {
         return UserPermissionsRepository.create(userPermissions);
     }
 
-    static async updateOne(requestingUser: string, user: string, channel: string, permissions: PermissionTypes[]) {
+    static async updateOne(requestingUser: string, user: string, channel: string, permissions: PermissionTypes[], isSysAdmin: boolean) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, channel),
             ChannelManager.getById(channel),
@@ -34,14 +34,14 @@ export class UserPermissionsManager {
 
         if (retChannel && retChannel.isProfile) throw new ProfileEditingIsForbiddenError();
 
-        if (isRequestingUserAdmin) {
+        if (isRequestingUserAdmin || isSysAdmin) {
             return UserPermissionsRepository.updateOne(user, channel, permissions);
         }
 
         throw new UnauthorizedUserError();
     }
 
-    static async deleteOne(requestingUser: string, user: string, channelId: string) {
+    static async deleteOne(requestingUser: string, user: string, channelId: string, isSysAdmin: boolean) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, channelId),
             ChannelManager.getById(channelId),
@@ -50,15 +50,10 @@ export class UserPermissionsManager {
         const [isRequestingUserAdmin, channel] = returnedResults;
 
         if (channel && channel.isProfile) throw new ProfileEditingIsForbiddenError();
+        if (!isRequestingUserAdmin && !isSysAdmin) throw new UnauthorizedUserError();
+        if (!channel || channel.user === user) throw new OwnerPermissionsCanNotBeRemovedError();
 
-        if (isRequestingUserAdmin) {
-            if (channel && channel.user !== user) {
-                return UserPermissionsRepository.deleteOne(user, channelId);
-            }
-            throw new OwnerPermissionsCanNotBeRemovedError();
-        }
-
-        throw new UnauthorizedUserError();
+        return UserPermissionsRepository.deleteOne(user, channelId);
     }
 
     // Only to get user's own permissions
@@ -74,7 +69,7 @@ export class UserPermissionsManager {
         return UserPermissionsRepository.getAmount({ user: requestingUser });
     }
 
-    static async getChannelPermittedUsers(requestingUser: string, channel: string, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
+    static async getChannelPermittedUsers(requestingUser: string, isSysAdmin: boolean, channel: string, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, channel),
             UserPermissionsRepository.getMany({ channel }, startIndex, endIndex, sortOrder, sortBy),
@@ -82,14 +77,12 @@ export class UserPermissionsManager {
 
         const [isRequestingUserAdmin, usersPermissions] = returnedResults;
 
-        if (isRequestingUserAdmin) {
-            return usersPermissions;
-        }
+        if (!isRequestingUserAdmin && !isSysAdmin) throw new UnauthorizedUserError();
 
-        throw new UnauthorizedUserError();
+        return usersPermissions;
     }
 
-    static async getChannelPermittedUsersAmount(requestingUser: string, channel: string) {
+    static async getChannelPermittedUsersAmount(requestingUser: string, isSysAdmin: boolean, channel: string) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, channel),
             UserPermissionsRepository.getAmount({ channel }),
@@ -97,11 +90,9 @@ export class UserPermissionsManager {
 
         const [isRequestingUserAdmin, usersPermissionsAmount] = returnedResults;
 
-        if (isRequestingUserAdmin) {
-            return usersPermissionsAmount;
-        }
+        if (!isRequestingUserAdmin && !isSysAdmin) throw new UnauthorizedUserError();
 
-        throw new UnauthorizedUserError();
+        return usersPermissionsAmount;
     }
 
     static async isUserAdmin(user: string, channel: string): Promise<boolean> {
