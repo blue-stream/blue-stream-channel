@@ -64,6 +64,7 @@ export class ChannelController {
             name: req.query.name,
             description: req.query.description,
             user: req.query.user,
+            isProfile: req.query.isProfile,
         };
 
         Object.keys(channelFilter).forEach((key: string) => {
