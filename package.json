@@ -14,7 +14,8 @@
     "test:coverage": "cross-env NODE_ENV=test nyc npm test",
     "coverage-test": "cross-env NODE_ENV=test nyc check-coverage --lines 95 --functions 95 --branches 95",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "release": "standard-version"
+    "release": "standard-version",
+    "loadtest:getmany": "artillery run artillery/get-many.yml"
   },
   "author": "Ron Borysovski, Almog Vagman, Saar Mornel & Yonatan Tal",
   "license": "ISC",
@@ -32,6 +33,7 @@
     "@types/passport": "^0.4.6",
     "@types/passport-jwt": "^3.0.1",
     "@types/supertest": "^2.0.6",
+    "artillery": "^1.6.0-27",
     "chai": "^4.2.0",
     "cross-env": "^5.2.0",
     "jsonwebtoken": "^8.3.0",
