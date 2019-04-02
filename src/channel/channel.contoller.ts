@@ -60,12 +60,22 @@ export class ChannelController {
     }
 
     static async getMany(req: Request, res: Response) {
-        const channelFilter: Partial<IChannel> = {
+        const channelFilter: any = {
             name: req.query.name,
             description: req.query.description,
             user: req.query.user,
             isProfile: req.query.isProfile,
         };
+
+        if (channelFilter.isProfile !== undefined) {
+            if (channelFilter.isProfile === 'true') {
+                channelFilter.isProfile = true;
+            } else if (channelFilter.isProfile === 'false') {
+                channelFilter.isProfile = false;
+            } else {
+                channelFilter.isProfile = undefined;
+            }
+        }
 
         Object.keys(channelFilter).forEach((key: string) => {
             return channelFilter[key as keyof IChannel] ===
