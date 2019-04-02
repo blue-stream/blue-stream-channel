@@ -10,19 +10,20 @@ config:
       - "isProfile"
   phases:
     - duration: 180
-      arrivalRate: 5
-      rampTo: 40
+      arrivalRate: 10
+      rampTo: 100
       name: "Warm up phase"
-    - pause: 10
-      name: "Pause phase"
-    - duration: 200
-      arrivalRate: 70
+    - duration: 600
+      arrivalRate: 100
       name: "Sustained max load phase"
   ensure:
     p99: 10
 scenarios:
   - flow:
-    - get:
-        url: "/api/channel/many?name={{ name }}&description={{ description }}&user={{ user }}&isProfile={{ isProfile }}"
+    - post:
+        url: "/api/channel"
+        json:
+          name: "{{ name }}"
+          description: "{{ description }}"
         headers:
           authorization: "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXJAZG8ifQ.k1sGqvw0IJ1ocB9XrF8Oviaz4D-A4E9fDkz_VmAY-LA"

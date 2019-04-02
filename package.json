@@ -15,7 +15,9 @@
     "coverage-test": "cross-env NODE_ENV=test nyc check-coverage --lines 95 --functions 95 --branches 95",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "release": "standard-version",
-    "loadtest:getmany": "artillery run artillery/get-many.yml"
+    "loadtest:getmany": "artillery run artillery/get-many.yml",
+    "loadtest:create": "artillery run artillery/create.yml",
+    "loadtest:search": "artillery run artillery/search.yml"
   },
   "author": "Ron Borysovski, Almog Vagman, Saar Mornel & Yonatan Tal",
   "license": "ISC",
