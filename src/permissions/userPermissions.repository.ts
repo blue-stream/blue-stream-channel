@@ -33,6 +33,26 @@ export class UserPermissionsRepository {
         ).exec();
     }
 
+    static getUserWithPermission(
+        channel: string,
+        permission: PermissionTypes,
+        startIndex: number = 0,
+        endIndex: number = config.channel.defaultAmountOfResults,
+        sortOrder: '-' | '' = '',
+        sortBy: string = 'user',
+    )
+        : Promise<IUserPermissions[] | null> {
+        return userPermissionsModel
+            .find({
+                channel,
+                permissions: permission,
+            })
+            .sort(sortOrder + sortBy)
+            .skip(+startIndex)
+            .limit(endIndex - startIndex)
+            .exec();
+    }
+
     static getMany(
         filter: Partial<IUserPermissions>,
         startIndex: number = 0,

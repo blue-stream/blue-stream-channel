@@ -69,6 +69,10 @@ export class UserPermissionsManager {
         return UserPermissionsRepository.getAmount({ user: requestingUser });
     }
 
+    static getChannelAdmins(channel: string, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
+        return UserPermissionsRepository.getUserWithPermission(channel, PermissionTypes.Admin, startIndex, endIndex, sortOrder, sortBy);
+    }
+
     static async getChannelPermittedUsers(requestingUser: string, isSysAdmin: boolean, channel: string, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
         const returnedResults = await Promise.all([
             UserPermissionsManager.isUserAdmin(requestingUser, channel),

@@ -38,6 +38,12 @@ export class UserPermissionsController {
         res.json(await UserPermissionsManager.getOne(requestingUser, channel));
     }
 
+    static async getChannelAdmins(req: Request, res: Response) {
+        const channel: string = req.params.channelId;
+
+        res.json(await UserPermissionsManager.getChannelAdmins(channel, req.query.startIndex, req.query.endIndex, req.query.sortOrder, req.query.sortBy));
+    }
+
     static async getChannelPermittedUsers(req: Request, res: Response) {
         const channel: string = req.params.channelId;
         const requestingUser: string = req.user.id;
