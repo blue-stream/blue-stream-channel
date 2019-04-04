@@ -70,7 +70,7 @@ export class UserPermissionsManager {
     }
 
     static getChannelAdmins(channel: string, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
-        return UserPermissionsRepository.getUserWithPermission(channel, PermissionTypes.Admin, startIndex, endIndex, sortOrder, sortBy);;
+        return UserPermissionsRepository.getUserWithPermission(channel, PermissionTypes.Admin, startIndex, endIndex, sortOrder, sortBy);
     }
 
     static async getChannelPermittedUsers(requestingUser: string, isSysAdmin: boolean, channel: string, startIndex?: number, endIndex?: number, sortOrder?: '-' | '', sortBy?: string) {
