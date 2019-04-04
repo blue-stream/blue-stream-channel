@@ -50,6 +50,12 @@ export class UserPermissionsValidator {
         );
     }
 
+    static canGetChannelAdmins(req: Request, res: Response, next: NextFunction) {
+        next(
+            ChannelValidator.validateId(req.params.channelId),
+        );
+    }
+
     static canGetUserPermittedChannelsAmount(req: Request, res: Response, next: NextFunction) {
         next(ChannelValidator.validateUser(req.user.id));
     }
