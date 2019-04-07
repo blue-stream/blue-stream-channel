@@ -12,6 +12,12 @@ export class NameInvalidError extends UserError {
     }
 }
 
+export class DuplicateNameError extends UserError {
+    constructor(message?: string) {
+        super(message || 'Duplicate channel name', 400);
+    }
+}
+
 export class DescriptionInvalidError extends UserError {
     constructor(message?: string) {
         super(message || 'Description is invalid', 400);

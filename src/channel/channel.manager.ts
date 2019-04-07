@@ -2,12 +2,18 @@ import { IChannel } from './channel.interface';
 
 import { ChannelRepository } from './channel.repository';
 import { ChannelBroker } from './channel.broker';
-import { ChannelNotFoundError, UnauthorizedUserError, ProfileEditingIsForbiddenError } from '../utils/errors/userErrors';
+import { ChannelNotFoundError, UnauthorizedUserError, ProfileEditingIsForbiddenError, DuplicateNameError } from '../utils/errors/userErrors';
 import { IUserPermissions, PermissionTypes } from '../permissions/userPermissions.interface';
 import { UserPermissionsManager } from '../permissions/userPermissions.manager';
 export class ChannelManager {
 
     static async create(channel: IChannel) {
+        if (!channel.isProfile) {
+            const existingChannel: IChannel[] = await ChannelManager.getMany({ name: channel.name }, 0, 1);
+
+            if (existingChannel.length >= 1) throw new DuplicateNameError();
+        }
+
         const createdChannel: IChannel = await ChannelRepository.create(channel);
 
         if (createdChannel && createdChannel.id) {
