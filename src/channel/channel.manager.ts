@@ -11,7 +11,7 @@ export class ChannelManager {
         if (!channel.isProfile) {
             const existingChannel: IChannel[] = await ChannelManager.getMany({ name: channel.name }, 0, 1);
 
-            if (existingChannel.length >= 1) throw new DuplicateNameError();
+            if (existingChannel.length === 1) throw new DuplicateNameError();
         }
 
         const createdChannel: IChannel = await ChannelRepository.create(channel);
@@ -48,6 +48,12 @@ export class ChannelManager {
         }
 
         if (!isPermitted) throw new UnauthorizedUserError();
+
+        if (channel.name) {
+            const existingChannel: IChannel[] = await ChannelManager.getMany({ name: channel.name }, 0, 1);
+
+            if (existingChannel.length === 1 && existingChannel[0].id !== currentChannel.id) throw new DuplicateNameError();
+        }
 
         return ChannelRepository.updateById(id, channel);
     }
