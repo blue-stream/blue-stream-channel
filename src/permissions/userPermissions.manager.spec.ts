@@ -21,7 +21,7 @@ const channel: IChannel = {
 };
 
 const channel2: IChannel = {
-    name: 'test',
+    name: 'test2',
     user: randomUser,
     description: 'test desc',
 };
@@ -381,8 +381,9 @@ describe('User Permissions Manager', function () {
 
         context('When data is valid', function () {
             beforeEach(async function () {
+                const secondChannel = { ...channel, name: 'channel_2' }
                 createdChannel = await ChannelManager.create(channel);
-                randomChannel = await ChannelManager.create(channel);
+                randomChannel = await ChannelManager.create(secondChannel);
 
                 expect(createdChannel).have.property('id');
                 expect(randomChannel).have.property('id');
@@ -435,9 +436,9 @@ describe('User Permissions Manager', function () {
     describe('#getUserPermittedChannels()', function () {
         context('When data is valid', function () {
             beforeEach(async function () {
-                await ChannelManager.create(channel);
-                await ChannelManager.create(channel);
-                await ChannelManager.create(channel);
+                await ChannelManager.create({ ...channel, name: 'c1' });
+                await ChannelManager.create({ ...channel, name: 'c2' });
+                await ChannelManager.create({ ...channel, name: 'c3' });
                 await ChannelManager.create(channel2);
             });
 
@@ -518,8 +519,8 @@ describe('User Permissions Manager', function () {
         context('When data is valid', function () {
             beforeEach(async function () {
                 await ChannelManager.create(channel);
-                await ChannelManager.create(channel);
-                await ChannelManager.create(channel);
+                await ChannelManager.create({...channel, name:'23'});
+                await ChannelManager.create({...channel, name:'24'});
             });
 
             it('Should return amount of channels that the user have permissions to', async function () {
