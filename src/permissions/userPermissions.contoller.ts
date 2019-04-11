@@ -69,4 +69,11 @@ export class UserPermissionsController {
 
         res.json(await UserPermissionsManager.getUserPermittedChannelsAmount(requestingUser));
     }
+
+    static async getIsUserAdmin(req: Request, res: Response) {
+        const requestingUser: string = req.user.id;
+        const channel: string = req.params.channelId;
+
+        res.json(await UserPermissionsManager.isUserAdmin(requestingUser, channel));
+    }
 }

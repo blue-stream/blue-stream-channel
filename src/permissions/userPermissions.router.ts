@@ -11,6 +11,7 @@ UserPermissionsRouter.delete('/', UserPermissionsValidator.canDeleteOne, Wrapper
 UserPermissionsRouter.get('/one', UserPermissionsValidator.canGetOne, Wrapper.wrapAsync(UserPermissionsController.getOne));
 UserPermissionsRouter.get('/channels', UserPermissionsValidator.canGetUserPermittedChannels, Wrapper.wrapAsync(UserPermissionsController.getUserPermittedChannels));
 UserPermissionsRouter.get('/:channelId/users', UserPermissionsValidator.canGetChannelPermittedUsers, Wrapper.wrapAsync(UserPermissionsController.getChannelPermittedUsers));
+UserPermissionsRouter.get('/:channelId/admin', UserPermissionsValidator.canGetIsUserAdmin, Wrapper.wrapAsync(UserPermissionsController.getIsUserAdmin));
 UserPermissionsRouter.get('/:channelId/admins', UserPermissionsValidator.canGetChannelAdmins, Wrapper.wrapAsync(UserPermissionsController.getChannelAdmins));
 UserPermissionsRouter.get('/channels/amount', UserPermissionsValidator.canGetUserPermittedChannelsAmount, Wrapper.wrapAsync(UserPermissionsController.getUserPermittedChannelsAmount));
 UserPermissionsRouter.get('/:channelId/users/amount', UserPermissionsValidator.canGetChannelPermittedUsersAmount, Wrapper.wrapAsync(UserPermissionsController.getChannelPermittedUsersAmount));
