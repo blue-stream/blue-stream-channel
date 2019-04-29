@@ -30,11 +30,11 @@ export const config = {
     },
     channel: {
         name: {
-            minLength: +(process.env.NAME_MAX_LENGTH || 2),
+            minLength: +(process.env.NAME_MIN_LENGTH || 2),
             maxLength: +(process.env.NAME_MAX_LENGTH || 32),
         },
         description: {
-            minLength: +(process.env.DESCRIPTION_MAX_LENGTH || 2),
+            minLength: +(process.env.DESCRIPTION_MIN_LENGTH || 2),
             maxLength: +(process.env.DESCRIPTION_MAX_LENGTH || 128),
         },
         defaultAmountOfResults: +(process.env.DEFAULT_RESULTS_AMOUNT || 20),
