@@ -1,5 +1,5 @@
-import { ChannelManager } from '../channel/channel.manager';
-import { IChannel } from '../channel/channel.interface';
+import { ChannelManager } from './channel.manager';
+import { IChannel } from './channel.interface';
 
 const jayson = require('jayson/promise');
 

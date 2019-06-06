@@ -1,6 +1,6 @@
 import { IUserPermissions, PermissionTypes } from './userPermissions.interface';
 import { UserPermissionsRepository } from './userPermissions.repository';
-import { UnauthorizedUserError, ChannelNotFoundError, UserPermissionsAlreadyExistsError, OwnerPermissionsCanNotBeRemovedError, ProfileEditingIsForbiddenError } from '../utils/errors/userErrors';
+import { UnauthorizedUserError, ChannelNotFoundError, UserPermissionsAlreadyExistsError, OwnerPermissionsCanNotBeRemovedError, ProfileEditingIsForbiddenError } from '../errors/userErrors';
 import { ChannelManager } from '../channel/channel.manager';
 
 export class UserPermissionsManager {

@@ -1,4 +1,4 @@
-import { UserError } from './applicationError';
+import {  } from '@bit/blue-stream.utils.error-handler';
 
 export class UserInvalidError extends UserError {
     constructor(message?: string) {

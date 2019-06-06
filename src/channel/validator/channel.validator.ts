@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ChannelValidations } from './channel.validations';
-import { IdInvalidError, DescriptionInvalidError, NameInvalidError, UserInvalidError } from '../../utils/errors/userErrors';
+import { IdInvalidError, DescriptionInvalidError, NameInvalidError, UserInvalidError } from '../../errors/userErrors';
 
 export class ChannelValidator {
 

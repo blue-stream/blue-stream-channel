@@ -46,6 +46,13 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
+    "@bit/bit.envs.compilers.typescript": "file:./components/compilers/typescript",
+    "@bit/blue-stream.utils.async-wrapper": "^1.0.0",
+    "@bit/blue-stream.utils.authenticator": "^1.0.0",
+    "@bit/blue-stream.utils.error-handler": "1.0.0",
+    "@bit/blue-stream.utils.health": "^1.0.0",
+    "@bit/blue-stream.utils.logger": "^1.0.0",
+    "@bit/blue-stream.utils.rabbit": "^1.0.0",
     "amqplib": "^0.5.2",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
@@ -58,5 +65,13 @@
     "uglify-es": "^3.3.9",
     "winston": "^3.2.1",
     "winston-elasticsearch": "^0.7.9"
+  },
+  "bit": {
+    "env": {},
+    "componentsDefaultDirectory": "components/{name}",
+    "packageManager": "npm",
+    "overrides": {
+      "blue-stream.utils/error-handler": {}
+    }
   }
 }

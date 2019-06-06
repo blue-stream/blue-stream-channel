@@ -5,9 +5,9 @@ import * as helmet from 'helmet';
 import * as morgan from 'morgan';
 import { config } from './config';
 import { AppRouter } from './router';
+import { userErrorHandler, serverErrorHandler, unknownErrorHandler } from '@bit/blue-stream.utils.error-handler';
+import { Authenticator } from '@bit/blue-stream.utils.authenticator';
 
-import { userErrorHandler, serverErrorHandler, unknownErrorHandler } from './utils/errors/errorHandler';
-import { Authenticator } from './utils/authenticator';
 export class Server {
     public app: express.Application;
     private server: http.Server;
@@ -56,8 +56,9 @@ export class Server {
         this.app.use(bodyParser.urlencoded({ extended: true }));
 
         if (config.authentication.required) {
-            this.app.use(Authenticator.initialize());
-            this.app.use(Authenticator.middleware);
+            const authenticator: Authenticator = new Authenticator(config.authentication.secret);
+            this.app.use(authenticator.initialize());
+            this.app.use(authenticator.middleware);
         }
     }
 

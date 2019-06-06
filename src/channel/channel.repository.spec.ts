@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import * as mongoose from 'mongoose';
 import { config } from '../config';
-import { ServerError } from '../utils/errors/applicationError';
+import { ServerError } from '@bit/blue-stream.utils.error-handler';
 import { IChannel } from './channel.interface';
 import { ChannelRepository } from './channel.repository';
 

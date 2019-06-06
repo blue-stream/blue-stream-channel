@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ChannelManager } from './channel.manager';
 
-import { ChannelNotFoundError } from '../utils/errors/userErrors';
+import { ChannelNotFoundError } from '../errors/userErrors';
 import { IChannel } from './channel.interface';
 
 export class ChannelController {

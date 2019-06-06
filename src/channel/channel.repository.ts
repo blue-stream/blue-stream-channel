@@ -1,7 +1,7 @@
 
 import { IChannel } from './channel.interface';
 import { ChannelModel } from './channel.model';
-import { ServerError } from '../utils/errors/applicationError';
+import { ServerError } from '@bit/blue-stream.utils.error-handler';
 import { config } from '../config';
 
 export class ChannelRepository {

@@ -8,7 +8,7 @@ import {
     UnauthorizedUserError,
     ChannelNotFoundError,
     PermissionInvalidError,
-} from '../../utils/errors/userErrors';
+} from '../../errors/userErrors';
 
 describe('Channel Validator Middleware', function () {
     describe('Create Validator', function () {

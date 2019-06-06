@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
-import * as rabbit from './utils/rabbit';
+import * as rabbit from '@bit/blue-stream.utils.rabbit';
 import { Server } from './server';
-import { log } from './utils/logger';
+import { Logger, log } from '@bit/blue-stream.utils.logger';
 import { config } from './config';
-import { RPCServer } from './utils/rpc.server';
+import { RPCServer } from './channel/channel.rpc';
 
 process.on('uncaughtException', (err) => {
     console.error('Unhandled Exception', err.stack);
@@ -38,10 +38,11 @@ process.on('SIGINT', async () => {
         { useNewUrlParser: true },
     );
 
+    Logger.init(config.server.name, { indexPrefix: config.logger.indexPrefix, clientOpts: config.logger.elasticsearch, });
     console.log('[MongoDB] connected');
 
-    log('verbose' , 'Server Started', `Port: ${config.server.port}`);
-    await rabbit.connect();
+    log('verbose', 'Server Started', `Port: ${config.server.port}`);
+    await rabbit.connect(config.rabbitMQ);
 
     console.log('Starting RPC Server');
     RPCServer.http().listen(config.rpc.port, function () {

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { UserPermissionsValidations } from './userPermissions.validations';
 import { ChannelValidations } from '../../channel/validator/channel.validations';
 import { ChannelValidator } from '../../channel/validator/channel.validator';
-import { IdInvalidError, DescriptionInvalidError, NameInvalidError, UserInvalidError, PermissionInvalidError } from '../../utils/errors/userErrors';
+import { IdInvalidError, DescriptionInvalidError, NameInvalidError, UserInvalidError, PermissionInvalidError } from '../../errors/userErrors';
 import { PermissionTypes } from '../userPermissions.interface';
 
 export class UserPermissionsValidator {

@@ -2,7 +2,7 @@ import { IChannel } from './channel.interface';
 
 import { ChannelRepository } from './channel.repository';
 import { ChannelBroker } from './channel.broker';
-import { ChannelNotFoundError, UnauthorizedUserError, ProfileEditingIsForbiddenError, DuplicateNameError } from '../utils/errors/userErrors';
+import { ChannelNotFoundError, UnauthorizedUserError, ProfileEditingIsForbiddenError, DuplicateNameError } from '../errors/userErrors';
 import { IUserPermissions, PermissionTypes } from '../permissions/userPermissions.interface';
 import { UserPermissionsManager } from '../permissions/userPermissions.manager';
 export class ChannelManager {

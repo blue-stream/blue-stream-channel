@@ -1,17 +1,17 @@
 import { Router } from 'express';
 import { ChannelValidator } from './validator/channel.validator';
 import { ChannelController } from './channel.contoller';
-import { Wrapper } from '../utils/wrapper';
+import { wrapAsync } from '../utils/asyncWrapper';
 
 const ChannelRouter: Router = Router();
 
-ChannelRouter.post('/', ChannelValidator.canCreate, Wrapper.wrapAsync(ChannelController.create));
-ChannelRouter.put('/:id', ChannelValidator.canUpdateById, Wrapper.wrapAsync(ChannelController.updateById));
-ChannelRouter.delete('/:id', ChannelValidator.canDeleteById, Wrapper.wrapAsync(ChannelController.deleteById));
-ChannelRouter.get('/search/amount', ChannelValidator.canGetSearchedAmount, Wrapper.wrapAsync(ChannelController.getSearchedAmount));
-ChannelRouter.get('/search', ChannelValidator.canGetSearched, Wrapper.wrapAsync(ChannelController.getSearched));
-ChannelRouter.get('/many', ChannelValidator.canGetMany, Wrapper.wrapAsync(ChannelController.getMany));
-ChannelRouter.get('/amount', ChannelValidator.canGetAmount, Wrapper.wrapAsync(ChannelController.getAmount));
-ChannelRouter.get('/:id', ChannelValidator.canGetById, Wrapper.wrapAsync(ChannelController.getById));
+ChannelRouter.post('/', ChannelValidator.canCreate, wrapAsync(ChannelController.create));
+ChannelRouter.put('/:id', ChannelValidator.canUpdateById, wrapAsync(ChannelController.updateById));
+ChannelRouter.delete('/:id', ChannelValidator.canDeleteById, wrapAsync(ChannelController.deleteById));
+ChannelRouter.get('/search/amount', ChannelValidator.canGetSearchedAmount, wrapAsync(ChannelController.getSearchedAmount));
+ChannelRouter.get('/search', ChannelValidator.canGetSearched, wrapAsync(ChannelController.getSearched));
+ChannelRouter.get('/many', ChannelValidator.canGetMany, wrapAsync(ChannelController.getMany));
+ChannelRouter.get('/amount', ChannelValidator.canGetAmount, wrapAsync(ChannelController.getAmount));
+ChannelRouter.get('/:id', ChannelValidator.canGetById, wrapAsync(ChannelController.getById));
 
 export { ChannelRouter };
